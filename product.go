@@ -7,7 +7,7 @@ import (
 type (
 	// Product https://developers.ecwid.com/api-documentation/products
 	Product struct {
-		ID                             uint    `json:"id"`
+		ID                             uint64  `json:"id"`
 		Sku                            string  `json:"sku"`
 		Quantity                       int     `json:"quantity"`
 		Unlimited                      bool    `json:"unlimited"`
@@ -19,8 +19,8 @@ type (
 		// TODO: add more filelds
 	}
 
-	// SearchProductsResponse https://developers.ecwid.com/api-documentation/products#search-products
-	SearchProductsResponse struct {
+	// ProductsSearchResponse https://developers.ecwid.com/api-documentation/products#search-products
+	ProductsSearchResponse struct {
 		Total    uint       `json:"total"`
 		Count    uint       `json:"count"`
 		Offset   uint       `json:"offset"`
@@ -29,8 +29,8 @@ type (
 	}
 )
 
-// SearchProducts search or filter products in a store catalog
-func (c *Client) SearchProducts(filter map[string]string) (*SearchProductsResponse, error) {
+// ProductsSearch search or filter products in a store catalog
+func (c *Client) ProductsSearch(filter map[string]string) (*ProductsSearchResponse, error) {
 	// filter:
 	// keyword string, priceFrom number, priceTo number, category number,
 	// withSubcategories bool, sortBy enum, offset number, limit number,
@@ -46,12 +46,12 @@ func (c *Client) SearchProducts(filter map[string]string) (*SearchProductsRespon
 		SetQueryParams(filter).
 		Get("/products")
 
-	var result SearchProductsResponse
+	var result ProductsSearchResponse
 	return &result, responseUnmarshal(response, err, &result)
 }
 
-// GetProduct gets all details of a specific product in an Ecwid store by its ID
-func (c *Client) GetProduct(productID uint) (*Product, error) {
+// ProductGet gets all details of a specific product in an Ecwid store by its ID
+func (c *Client) ProductGet(productID uint64) (*Product, error) {
 	response, err := c.R().
 		SetPathParams(map[string]string{
 			"productId": fmt.Sprintf("%d", productID),
@@ -62,9 +62,9 @@ func (c *Client) GetProduct(productID uint) (*Product, error) {
 	return &result, responseUnmarshal(response, err, &result)
 }
 
-// AddProduct creates a new product in an Ecwid store
+// ProductAdd creates a new product in an Ecwid store
 // returns new productId
-func (c *Client) AddProduct(product *Product) (uint, error) {
+func (c *Client) ProductAdd(product *Product) (uint64, error) {
 	// FIXME!!! похоже на каждый запрос (add|get|search|update) набор полей различный
 
 	response, err := c.R().
@@ -72,13 +72,12 @@ func (c *Client) AddProduct(product *Product) (uint, error) {
 		SetBody(product).
 		Post("/products")
 
-	id, err := responseAdd(response, err)
-	return uint(id), err // TODO ID uint64
+	return responseAdd(response, err)
 }
 
-// UpdateProduct update an existing product in an Ecwid store referring to its ID
-// before update use GetProduct to retrieve full data
-func (c *Client) UpdateProduct(productID uint, product *Product) error {
+// ProductUpdate update an existing product in an Ecwid store referring to its ID
+// before update use ProductGet to retrieve full data
+func (c *Client) ProductUpdate(productID uint64, product *Product) error {
 	response, err := c.R().
 		SetPathParams(map[string]string{
 			"productId": fmt.Sprintf("%d", productID),
@@ -93,8 +92,8 @@ func (c *Client) UpdateProduct(productID uint, product *Product) error {
 // TODO try to pass partial json with help https://github.com/tidwall/sjson
 // func (c *Client) UpdateProductJson(productID uint, productJson string) error {
 
-// DeleteProduct delete a product from an Ecwid store referring to its ID
-func (c *Client) DeleteProduct(productID uint) error {
+// ProductDelete delete a product from an Ecwid store referring to its ID
+func (c *Client) ProductDelete(productID uint64) error {
 	response, err := c.R().
 		SetPathParams(map[string]string{
 			"productId": fmt.Sprintf("%d", productID),
@@ -104,8 +103,8 @@ func (c *Client) DeleteProduct(productID uint) error {
 	return responseDelete(response, err)
 }
 
-// AdjustProductInventory increase or decrease the product’s stock quantity by a delta quantity
-func (c *Client) AdjustProductInventory(productID uint, quantityDelta int) (int, error) {
+// ProductInventoryAdjust increase or decrease the product’s stock quantity by a delta quantity
+func (c *Client) ProductInventoryAdjust(productID uint, quantityDelta int) (int, error) {
 	response, err := c.R().
 		SetPathParams(map[string]string{
 			"productId": fmt.Sprintf("%d", productID),

@@ -12,7 +12,7 @@ import (
 	httpmock "gopkg.in/jarcoal/httpmock.v1"
 )
 
-func TestGetCategories(t *testing.T) {
+func TestCategoriesGet(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -40,7 +40,7 @@ func TestGetCategories(t *testing.T) {
 			return httpmock.NewStringResponse(200, `{"total":2,"count":2,"offset":0,"limit":100,"items":[{"id": 1, "name": "one"},{"id": 2, "url": "`+url+`"}]}`), nil
 		})
 
-	result, err := New(storeID, token).GetCategories(map[string]string{
+	result, err := New(storeID, token).CategoriesGet(map[string]string{
 		"parent": "0",
 		"limit":  "5",
 	})
@@ -54,7 +54,7 @@ func TestGetCategories(t *testing.T) {
 	assert.Equal(t, url, result.Items[1].URL)
 }
 
-func TestGetCategory(t *testing.T) {
+func TestCategoryGet(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -75,18 +75,18 @@ func TestGetCategory(t *testing.T) {
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
 			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
 
-			return httpmock.NewStringResponse(200, `{"id":999, "name":"name"}`), nil
+			return httpmock.NewStringResponse(200, fmt.Sprintf(`{"id":%d, "name":"name"}`, categoryID)), nil
 		})
 
-	c, err := New(storeID, token).GetCategory(categoryID)
+	c, err := New(storeID, token).CategoryGet(categoryID)
 	assert.Truef(t, requested, "request failed")
 
 	assert.Nil(t, err)
-	assert.Equal(t, uint64(999), c.ID, "id")
+	assert.Equal(t, uint64(categoryID), c.ID, "id")
 	assert.Equal(t, "name", c.Name, "name")
 }
 
-func TestAddNewCategory(t *testing.T) {
+func TestCategoryAdd(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -118,14 +118,14 @@ func TestAddNewCategory(t *testing.T) {
 			return httpmock.NewStringResponse(200, `{"id":999}`), nil
 		})
 
-	id, err := New(storeID, token).AddNewCategory(&NewCategory{Name: name})
+	id, err := New(storeID, token).CategoryAdd(&NewCategory{Name: name})
 	assert.Truef(t, requested, "request failed")
 
 	assert.Nil(t, err)
 	assert.Equal(t, uint64(999), id, "id")
 }
 
-func TestUpdateCategory(t *testing.T) {
+func TestCategoryUpdate(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -158,13 +158,13 @@ func TestUpdateCategory(t *testing.T) {
 			return httpmock.NewStringResponse(200, `{"updateCount":1}`), nil
 		})
 
-	err := New(storeID, token).UpdateCategory(categoryID, &NewCategory{Name: name})
+	err := New(storeID, token).CategoryUpdate(categoryID, &NewCategory{Name: name})
 	assert.Truef(t, requested, "request failed")
 
 	assert.Nil(t, err)
 }
 
-func TestDeleteCategory(t *testing.T) {
+func TestCategoryDelete(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -188,7 +188,7 @@ func TestDeleteCategory(t *testing.T) {
 			return httpmock.NewStringResponse(200, `{"deleteCount":1}`), nil
 		})
 
-	err := New(storeID, token).DeleteCategory(categoryID)
+	err := New(storeID, token).CategoryDelete(categoryID)
 	assert.Truef(t, requested, "request failed")
 
 	assert.Nil(t, err)

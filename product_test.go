@@ -12,7 +12,7 @@ import (
 	httpmock "gopkg.in/jarcoal/httpmock.v1"
 )
 
-func TestSearchProductsRequest(t *testing.T) {
+func TestProductsSearchRequest(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -39,7 +39,7 @@ func TestSearchProductsRequest(t *testing.T) {
 			return httpmock.NewStringResponse(200, ""), nil
 		})
 
-	New(storeID, token).SearchProducts(map[string]string{
+	New(storeID, token).ProductsSearch(map[string]string{
 		"keyword": "test product",
 		"limit":   "5",
 	})
@@ -47,9 +47,9 @@ func TestSearchProductsRequest(t *testing.T) {
 
 }
 
-// TODO TestSearchProductsResponse
+// TODO TestProductsSearchResponse
 
-func TestGetProduct(t *testing.T) {
+func TestProductGet(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -70,20 +70,18 @@ func TestGetProduct(t *testing.T) {
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
 			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
 
-			return httpmock.NewStringResponse(200, `{"id":999, "sku":"sky"}`), nil
+			return httpmock.NewStringResponse(200, fmt.Sprintf(`{"id":%d, "sku":"sky"}`, productID)), nil
 		})
 
-	p, err := New(storeID, token).GetProduct(productID)
+	p, err := New(storeID, token).ProductGet(productID)
 	assert.Truef(t, requested, "request failed")
 
 	assert.Nil(t, err)
-	assert.Equal(t, uint(999), p.ID, "id")
+	assert.Equal(t, uint64(productID), p.ID, "id")
 	assert.Equal(t, "sky", p.Sku, "sku")
 }
 
-// TODO TestGetProductResponseFail
-
-func TestAddProduct(t *testing.T) {
+func TestProductAdd(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -115,16 +113,14 @@ func TestAddProduct(t *testing.T) {
 			return httpmock.NewStringResponse(200, `{"id":999}`), nil
 		})
 
-	id, err := New(storeID, token).AddProduct(&Product{Sku: sku})
+	id, err := New(storeID, token).ProductAdd(&Product{Sku: sku})
 	assert.Truef(t, requested, "request failed")
 
 	assert.Nil(t, err)
-	assert.Equal(t, uint(999), id, "id")
+	assert.Equal(t, uint64(999), id, "id")
 }
 
-// TODO TestAddProductResponseFail
-
-func TestUpdateProduct(t *testing.T) {
+func TestProductUpdate(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -157,13 +153,13 @@ func TestUpdateProduct(t *testing.T) {
 			return httpmock.NewStringResponse(200, `{"updateCount":1}`), nil
 		})
 
-	err := New(storeID, token).UpdateProduct(productID, &Product{Sku: sku})
+	err := New(storeID, token).ProductUpdate(productID, &Product{Sku: sku})
 	assert.Truef(t, requested, "request failed")
 
 	assert.Nil(t, err)
 }
 
-func TestDeleteProduct(t *testing.T) {
+func TestProductDelete(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -187,13 +183,13 @@ func TestDeleteProduct(t *testing.T) {
 			return httpmock.NewStringResponse(200, `{"deleteCount":1}`), nil
 		})
 
-	err := New(storeID, token).DeleteProduct(productID)
+	err := New(storeID, token).ProductDelete(productID)
 	assert.Truef(t, requested, "request failed")
 
 	assert.Nil(t, err)
 }
 
-func TestAdjustProductInventory(t *testing.T) {
+func TestProductInventoryAdjust(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -226,7 +222,7 @@ func TestAdjustProductInventory(t *testing.T) {
 			return httpmock.NewStringResponse(200, `{"updateCount":1}`), nil
 		})
 
-	quantity, err := New(storeID, token).AdjustProductInventory(productID, -1)
+	quantity, err := New(storeID, token).ProductInventoryAdjust(productID, -1)
 	assert.Truef(t, requested, "request failed")
 
 	assert.Nil(t, err)

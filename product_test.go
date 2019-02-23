@@ -22,9 +22,12 @@ func TestSearchProductsRequest(t *testing.T) {
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/products", storeID)
+	requested := false
 
 	httpmock.RegisterNoResponder(
 		func(req *http.Request) (*http.Response, error) {
+			requested = true
+
 			assert.Equal(t, "GET", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
 			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
@@ -40,6 +43,8 @@ func TestSearchProductsRequest(t *testing.T) {
 		"keyword": "test product",
 		"limit":   "5",
 	})
+	assert.Truef(t, requested, "request failed")
+
 }
 
 // TODO TestSearchProductsResponse
@@ -55,9 +60,12 @@ func TestGetProduct(t *testing.T) {
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/products/%d", storeID, productID)
+	requested := false
 
 	httpmock.RegisterNoResponder(
 		func(req *http.Request) (*http.Response, error) {
+			requested = true
+
 			assert.Equal(t, "GET", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
 			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
@@ -66,6 +74,8 @@ func TestGetProduct(t *testing.T) {
 		})
 
 	p, err := New(storeID, token).GetProduct(productID)
+	assert.Truef(t, requested, "request failed")
+
 	assert.Nil(t, err)
 	assert.Equal(t, uint(999), p.ID, "id")
 	assert.Equal(t, "sky", p.Sku, "sku")
@@ -84,9 +94,12 @@ func TestAddProduct(t *testing.T) {
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/products", storeID)
+	requested := false
 
 	httpmock.RegisterNoResponder(
 		func(req *http.Request) (*http.Response, error) {
+			requested = true
+
 			assert.Equal(t, "POST", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
 			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
@@ -102,6 +115,8 @@ func TestAddProduct(t *testing.T) {
 		})
 
 	id, err := New(storeID, token).AddProduct(&Product{Sku: sku})
+	assert.Truef(t, requested, "request failed")
+
 	assert.Nil(t, err)
 	assert.Equal(t, uint(999), id, "id")
 }
@@ -120,9 +135,12 @@ func TestUpdateProduct(t *testing.T) {
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/products/%d", storeID, productID)
+	requested := false
 
 	httpmock.RegisterNoResponder(
 		func(req *http.Request) (*http.Response, error) {
+			requested = true
+
 			assert.Equal(t, "PUT", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
 			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
@@ -138,6 +156,8 @@ func TestUpdateProduct(t *testing.T) {
 		})
 
 	err := New(storeID, token).UpdateProduct(productID, &Product{Sku: sku})
+	assert.Truef(t, requested, "request failed")
+
 	assert.Nil(t, err)
 }
 
@@ -152,9 +172,12 @@ func TestDeleteProduct(t *testing.T) {
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/products/%d", storeID, productID)
+	requested := false
 
 	httpmock.RegisterNoResponder(
 		func(req *http.Request) (*http.Response, error) {
+			requested = true
+
 			assert.Equal(t, "DELETE", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
 			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
@@ -163,6 +186,8 @@ func TestDeleteProduct(t *testing.T) {
 		})
 
 	err := New(storeID, token).DeleteProduct(productID)
+	assert.Truef(t, requested, "request failed")
+
 	assert.Nil(t, err)
 }
 
@@ -177,9 +202,12 @@ func TestAdjustProductInventory(t *testing.T) {
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/products/%d/inventory", storeID, productID)
+	requested := false
 
 	httpmock.RegisterNoResponder(
 		func(req *http.Request) (*http.Response, error) {
+			requested = true
+
 			assert.Equal(t, "PUT", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
 			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
@@ -197,6 +225,8 @@ func TestAdjustProductInventory(t *testing.T) {
 		})
 
 	quantity, err := New(storeID, token).AdjustProductInventory(productID, -1)
+	assert.Truef(t, requested, "request failed")
+
 	assert.Nil(t, err)
 	assert.Equal(t, 1, quantity, "quantity")
 }

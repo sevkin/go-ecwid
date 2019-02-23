@@ -103,6 +103,7 @@ func TestAddProduct(t *testing.T) {
 			assert.Equal(t, "POST", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
 			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
+			assert.Equal(t, "application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
 
 			body, err := ioutil.ReadAll(req.Body)
 			assert.Nil(t, err)
@@ -144,6 +145,7 @@ func TestUpdateProduct(t *testing.T) {
 			assert.Equal(t, "PUT", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
 			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
+			assert.Equal(t, "application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
 
 			body, err := ioutil.ReadAll(req.Body)
 			assert.Nil(t, err)

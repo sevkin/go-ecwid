@@ -7,6 +7,18 @@ import (
 	resty "gopkg.in/resty.v1"
 )
 
+func errorResponse(response *resty.Response) error {
+	var result struct {
+		ErrorMessage string `json:"errorMessage"`
+	}
+	if err := json.Unmarshal(response.Body(), &result); err == nil && len(result.ErrorMessage) > 0 {
+		if result.ErrorMessage != "" {
+			return errors.New(result.ErrorMessage)
+		}
+	}
+	return errors.New(response.Status())
+}
+
 func responseUnmarshal(response *resty.Response, err error, result interface{}) error {
 	if err != nil {
 		return err
@@ -35,16 +47,20 @@ func responseAdd(response *resty.Response, err error) (uint64, error) {
 	return result.ID, nil
 }
 
-func responseUpdate(response *resty.Response, err error) error {
+func responseUpdateCount(response *resty.Response, err error) (int, error) {
 	var result struct {
-		UpdateCount uint `json:"updateCount"`
+		UpdateCount int `json:"updateCount"`
 	}
 
-	if err := responseUnmarshal(response, err, &result); err != nil {
+	return result.UpdateCount, responseUnmarshal(response, err, &result)
+}
+
+func responseUpdate(response *resty.Response, err error) error {
+	count, err := responseUpdateCount(response, err)
+	if err != nil {
 		return err
 	}
-
-	if result.UpdateCount != 1 {
+	if count != 1 {
 		return errors.New("no updated")
 	}
 	return nil

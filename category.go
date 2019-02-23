@@ -52,7 +52,7 @@ type (
 func (c *Client) GetCategories(filter map[string]string) (*GetCategoriesResponse, error) {
 	// filter:
 	// parent number, hidden_categories bool, offset number, limit number,
-	// productIds array?, baseUrl string, cleanUrls string
+	// productIds array?, baseUrl string, cleanUrls bool
 
 	response, err := c.R().
 		SetQueryParams(filter).

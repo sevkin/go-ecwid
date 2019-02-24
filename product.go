@@ -2,21 +2,67 @@ package ecwid
 
 import (
 	"fmt"
+	"html/template"
 )
 
 type (
-	// Product https://developers.ecwid.com/api-documentation/products
+	// NewProduct https://developers.ecwid.com/api-documentation/products#add-a-product
+	NewProduct struct {
+		Name                  string        `json:"name,omitempty"`
+		Sku                   string        `json:"sku,omitempty"`
+		Quantity              int           `json:"quantity,omitempty"`
+		Unlimited             bool          `json:"unlimited,omitempty"`
+		Price                 float32       `json:"price,omitempty"`
+		CompareToPrice        float32       `json:"compareToPrice,omitempty"`
+		IsShippingRequired    bool          `json:"isShippingRequired,omitempty"`
+		Weight                float32       `json:"weight,omitempty"`
+		ProductClassID        uint64        `json:"productClassId,omitempty"`
+		Enabled               bool          `json:"enabled,omitempty"`
+		WarningLimit          uint          `json:"warningLimit,omitempty"`
+		FixedShippingRateOnly bool          `json:"fixedShippingRateOnly,omitempty"`
+		FixedShippingRate     float32       `json:"fixedShippingRate,omitempty"`
+		Description           template.HTML `json:"description,omitempty"`
+		SeoTitle              string        `json:"seoTitle,omitempty"`
+		SeoDescription        string        `json:"seoDescription,omitempty"`
+		DefaultCategoryID     uint64        `json:"defaultCategoryId,omitempty"`
+		ShowOnFrontpage       int           `json:"showOnFrontpage,omitempty"`
+
+		// wholesalePrices	Array<WholesalePrice> `json:"wholesalePrices,omitempty"`
+		// tax	<TaxInfo> `json:"tax,omitempty"`
+		// options	Array<ProductOption> `json:"options,omitempty"`
+		// shipping	<ShippingSettings> `json:"shipping,omitempty"`
+		// categoryIds	Array<number> `json:"categoryIds,omitempty"`
+		// attributes	Array<AttributeValue> `json:"attributes,omitempty"`
+		// relatedProducts	<RelatedProducts> `json:"relatedProducts,omitempty"`
+		// dimensions	<ProductDimensions> `json:"dimensions,omitempty"`
+	}
+	// media	<ProductMedia> `json:"media,omitempty"` // ProductUpdate, ProductGet ProductsSearch
+	// galleryImages	Array<GalleryImage>	 // only ProductUpdate
+
+	// Product https://developers.ecwid.com/api-documentation/products#get-a-product
 	Product struct {
-		ID                             uint64  `json:"id"`
-		Sku                            string  `json:"sku"`
-		Quantity                       int     `json:"quantity"`
-		Unlimited                      bool    `json:"unlimited"`
-		InStock                        bool    `json:"inStock"`
-		Name                           string  `json:"name"`
-		Price                          float32 `json:"price"`
-		DefaultDisplayedPrice          float32 `json:"defaultDisplayedPrice"`
-		DefaultDisplayedPriceFormatted string  `json:"defaultDisplayedPriceFormatted"`
-		// TODO: add more filelds
+		*NewProduct
+		ID                                     uint64  `json:"id"`
+		InStock                                bool    `json:"inStock,omitempty"`
+		DefaultDisplayedPrice                  float32 `json:"defaultDisplayedPrice,omitempty"`
+		DefaultDisplayedPriceFormatted         string  `json:"defaultDisplayedPriceFormatted,omitempty"`
+		CompareToPriceFormatted                string  `json:"compareToPriceFormatted,omitempty"`
+		CompareToPriceDiscount                 float32 `json:"compareToPriceDiscount,omitempty"`
+		CompareToPriceDiscountFormatted        string  `json:"compareToPriceDiscountFormatted,omitempty"`
+		CompareToPriceDiscountPercent          float32 `json:"compareToPriceDiscountPercent,omitempty"`
+		CompareToPriceDiscountPercentFormatted string  `json:"compareToPriceDiscountPercentFormatted,omitempty"`
+		URL                                    string  `json:"url,omitempty"`
+		Created                                string  `json:"created,omitempty"`
+		Updated                                string  `json:"updated,omitempty"`
+		CreateTimestamp                        uint    `json:"createTimestamp,omitempty"`
+		UpdateTimestamp                        uint    `json:"updateTimestamp,omitempty"`
+		DefaultCombinationID                   uint64  `json:"defaultCombinationId,omitempty"`
+		IsSampleProduct                        bool    `json:"isSampleProduct,omitempty"`
+
+		// categories	Array<CategoriesInfo> `json:"categories,omitempty"`
+		// favorites	<FavoritesStats> `json:"favorites,omitempty"`
+		// files	Array<ProductFile> `json:"files,omitempty"`
+		// combinations	Array<Variation> `json:"combinations,omitempty"`
 	}
 
 	// ProductsSearchResponse https://developers.ecwid.com/api-documentation/products#search-products
@@ -64,9 +110,7 @@ func (c *Client) ProductGet(productID uint64) (*Product, error) {
 
 // ProductAdd creates a new product in an Ecwid store
 // returns new productId
-func (c *Client) ProductAdd(product *Product) (uint64, error) {
-	// FIXME!!! похоже на каждый запрос (add|get|search|update) набор полей различный
-
+func (c *Client) ProductAdd(product *NewProduct) (uint64, error) {
 	response, err := c.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(product).
@@ -77,7 +121,7 @@ func (c *Client) ProductAdd(product *Product) (uint64, error) {
 
 // ProductUpdate update an existing product in an Ecwid store referring to its ID
 // before update use ProductGet to retrieve full data
-func (c *Client) ProductUpdate(productID uint64, product *Product) error {
+func (c *Client) ProductUpdate(productID uint64, product *NewProduct) error {
 	response, err := c.R().
 		SetPathParams(map[string]string{
 			"productId": fmt.Sprintf("%d", productID),

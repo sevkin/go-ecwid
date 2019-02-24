@@ -113,7 +113,7 @@ func TestProductAdd(t *testing.T) {
 			return httpmock.NewStringResponse(200, `{"id":999}`), nil
 		})
 
-	id, err := New(storeID, token).ProductAdd(&Product{Sku: sku})
+	id, err := New(storeID, token).ProductAdd(&NewProduct{Sku: sku})
 	assert.Truef(t, requested, "request failed")
 
 	assert.Nil(t, err)
@@ -153,7 +153,7 @@ func TestProductUpdate(t *testing.T) {
 			return httpmock.NewStringResponse(200, `{"updateCount":1}`), nil
 		})
 
-	err := New(storeID, token).ProductUpdate(productID, &Product{Sku: sku})
+	err := New(storeID, token).ProductUpdate(productID, &NewProduct{Sku: sku})
 	assert.Truef(t, requested, "request failed")
 
 	assert.Nil(t, err)

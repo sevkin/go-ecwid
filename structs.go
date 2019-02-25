@@ -33,14 +33,22 @@ type (
 		Price    float32 `json:"price,omitempty"`
 	}
 
-	AttributeValue struct {
-		ID    uint64 `json:"id"`
+	// //
+
+	Attribute struct {
+		ID    uint64 `json:"id,omitempty"` // mandatory for update exist attributes
 		Name  string `json:"name,omitempty"`
-		Value string `json:"value,omitempty"`
-		Type  string `json:"type,omitempty"`
-		Show  string `json:"show,omitempty"`
-		// Alias string `json:"alias,omitempty"`
+		Alias string `json:"alias,omitempty"`
+		Type  string `json:"type,omitempty"` // CUSTOM, UPC, BRAND, GENDER, AGE_GROUP, COLOR, SIZE, PRICE_PER_UNIT, UNITS_IN_PRODUCT
+		Show  string `json:"show,omitempty"` // NOTSHOW, DESCR, PRICE
 	}
+
+	AttributeValue struct {
+		Attribute
+		Value string `json:"value,omitempty"`
+	}
+
+	// //
 
 	RelatedCategory struct {
 		Enabled      bool   `json:"enabled,omitempty"`

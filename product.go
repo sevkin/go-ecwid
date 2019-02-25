@@ -100,10 +100,7 @@ func (c *Client) ProductsSearch(filter map[string]string) (*ProductsSearchRespon
 // ProductGet gets all details of a specific product in an Ecwid store by its ID
 func (c *Client) ProductGet(productID uint64) (*Product, error) {
 	response, err := c.R().
-		SetPathParams(map[string]string{
-			"productId": fmt.Sprintf("%d", productID),
-		}).
-		Get("/products/{productId}")
+		Get(fmt.Sprintf("/products/%d", productID))
 
 	var result Product
 	return &result, responseUnmarshal(response, err, &result)
@@ -124,12 +121,9 @@ func (c *Client) ProductAdd(product *NewProduct) (uint64, error) {
 // before update use ProductGet to retrieve full data
 func (c *Client) ProductUpdate(productID uint64, product *NewProduct) error {
 	response, err := c.R().
-		SetPathParams(map[string]string{
-			"productId": fmt.Sprintf("%d", productID),
-		}).
 		SetHeader("Content-Type", "application/json").
 		SetBody(product).
-		Put("/products/{productId}")
+		Put(fmt.Sprintf("/products/%d", productID))
 
 	return responseUpdate(response, err)
 }
@@ -140,10 +134,7 @@ func (c *Client) ProductUpdate(productID uint64, product *NewProduct) error {
 // ProductDelete delete a product from an Ecwid store referring to its ID
 func (c *Client) ProductDelete(productID uint64) error {
 	response, err := c.R().
-		SetPathParams(map[string]string{
-			"productId": fmt.Sprintf("%d", productID),
-		}).
-		Delete("/products/{productId}")
+		Delete(fmt.Sprintf("/products/%d", productID))
 
 	return responseDelete(response, err)
 }
@@ -151,11 +142,8 @@ func (c *Client) ProductDelete(productID uint64) error {
 // ProductInventoryAdjust increase or decrease the product’s stock quantity by a delta quantity
 func (c *Client) ProductInventoryAdjust(productID uint, quantityDelta int) (int, error) {
 	response, err := c.R().
-		SetPathParams(map[string]string{
-			"productId": fmt.Sprintf("%d", productID),
-		}).
 		SetBody(fmt.Sprintf(`{"quantityDelta":%d}`, quantityDelta)).
-		Put("/products/{productId}/inventory")
+		Put(fmt.Sprintf("/products/%d/inventory", productID))
 
 	return responseUpdateCount(response, err)
 }

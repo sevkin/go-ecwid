@@ -65,10 +65,7 @@ func (c *Client) CategoriesGet(filter map[string]string) (*CategoriesGetResponse
 // CategoryGet gets all details of a specific category in an Ecwid store by its ID
 func (c *Client) CategoryGet(categoryID uint64) (*Category, error) {
 	response, err := c.R().
-		SetPathParams(map[string]string{
-			"categoryId": fmt.Sprintf("%d", categoryID),
-		}).
-		Get("/categories/{categoryId}")
+		Get(fmt.Sprintf("/categories/%d", categoryID))
 
 	var result Category
 	return &result, responseUnmarshal(response, err, &result)
@@ -89,12 +86,9 @@ func (c *Client) CategoryAdd(category *NewCategory) (uint64, error) {
 // before update use CategoryGet to retrieve full data
 func (c *Client) CategoryUpdate(categoryID uint64, category *NewCategory) error {
 	response, err := c.R().
-		SetPathParams(map[string]string{
-			"categoryId": fmt.Sprintf("%d", categoryID),
-		}).
 		SetHeader("Content-Type", "application/json").
 		SetBody(category).
-		Put("/categories/{categoryId}")
+		Put(fmt.Sprintf("/categories/%d", categoryID))
 
 	return responseUpdate(response, err)
 }
@@ -102,10 +96,7 @@ func (c *Client) CategoryUpdate(categoryID uint64, category *NewCategory) error 
 // CategoryDelete delete a category from an Ecwid store referring to its ID
 func (c *Client) CategoryDelete(categoryID uint64) error {
 	response, err := c.R().
-		SetPathParams(map[string]string{
-			"categoryId": fmt.Sprintf("%d", categoryID),
-		}).
-		Delete("/categories/{categoryId}")
+		Delete(fmt.Sprintf("/categories/%d", categoryID))
 
 	return responseDelete(response, err)
 }

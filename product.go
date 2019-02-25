@@ -8,7 +8,7 @@ import (
 type (
 	// NewProduct https://developers.ecwid.com/api-documentation/products#add-a-product
 	NewProduct struct {
-		Name                  string        `json:"name,omitempty"`
+		Name                  string        `json:"name,omitempty"` // mandatory for ProductAdd
 		Sku                   string        `json:"sku,omitempty"`
 		Quantity              int           `json:"quantity,omitempty"`
 		Unlimited             bool          `json:"unlimited,omitempty"`
@@ -17,6 +17,7 @@ type (
 		IsShippingRequired    bool          `json:"isShippingRequired,omitempty"`
 		Weight                float32       `json:"weight,omitempty"`
 		ProductClassID        uint64        `json:"productClassId,omitempty"`
+		Created               string        `json:"created,omitempty"` // may be in Product not NewProduct
 		Enabled               bool          `json:"enabled,omitempty"`
 		WarningLimit          uint          `json:"warningLimit,omitempty"`
 		FixedShippingRateOnly bool          `json:"fixedShippingRateOnly,omitempty"`
@@ -27,17 +28,18 @@ type (
 		DefaultCategoryID     uint64        `json:"defaultCategoryId,omitempty"`
 		ShowOnFrontpage       int           `json:"showOnFrontpage,omitempty"`
 
-		// wholesalePrices	Array<WholesalePrice> `json:"wholesalePrices,omitempty"`
-		// tax	<TaxInfo> `json:"tax,omitempty"`
-		// options	Array<ProductOption> `json:"options,omitempty"`
-		// shipping	<ShippingSettings> `json:"shipping,omitempty"`
-		// categoryIds	Array<number> `json:"categoryIds,omitempty"`
-		// attributes	Array<AttributeValue> `json:"attributes,omitempty"`
-		// relatedProducts	<RelatedProducts> `json:"relatedProducts,omitempty"`
-		// dimensions	<ProductDimensions> `json:"dimensions,omitempty"`
+		CategoryIDs     []uint64           `json:"categoryIds,omitempty"`
+		WholesalePrices []WholesalePrice   `json:"wholesalePrices,omitempty"`
+		Options         []ProductOption    `json:"options,omitempty"`
+		Attributes      []AttributeValue   `json:"attributes,omitempty"`
+		Tax             *TaxInfo           `json:"tax,omitempty"`
+		Shipping        *ShippingSettings  `json:"shipping,omitempty"`
+		RelatedProducts *RelatedProducts   `json:"relatedProducts,omitempty"`
+		Dimensions      *ProductDimensions `json:"dimensions,omitempty"`
+
+		Media *ProductMedia `json:"media,omitempty"` // ProductUpdate, ProductGet ProductsSearch
+		// GalleryImages []GalleryImage `json:"galleryImages,omitempty"` // only ProductUpdate
 	}
-	// media	<ProductMedia> `json:"media,omitempty"` // ProductUpdate, ProductGet ProductsSearch
-	// galleryImages	Array<GalleryImage>	 // only ProductUpdate
 
 	// Product https://developers.ecwid.com/api-documentation/products#get-a-product
 	Product struct {
@@ -52,17 +54,16 @@ type (
 		CompareToPriceDiscountPercent          float32 `json:"compareToPriceDiscountPercent,omitempty"`
 		CompareToPriceDiscountPercentFormatted string  `json:"compareToPriceDiscountPercentFormatted,omitempty"`
 		URL                                    string  `json:"url,omitempty"`
-		Created                                string  `json:"created,omitempty"`
 		Updated                                string  `json:"updated,omitempty"`
 		CreateTimestamp                        uint    `json:"createTimestamp,omitempty"`
 		UpdateTimestamp                        uint    `json:"updateTimestamp,omitempty"`
 		DefaultCombinationID                   uint64  `json:"defaultCombinationId,omitempty"`
 		IsSampleProduct                        bool    `json:"isSampleProduct,omitempty"`
 
-		// categories	Array<CategoriesInfo> `json:"categories,omitempty"`
-		// favorites	<FavoritesStats> `json:"favorites,omitempty"`
-		// files	Array<ProductFile> `json:"files,omitempty"`
-		// combinations	Array<Variation> `json:"combinations,omitempty"`
+		Combinations []ProductVariation `json:"combinations,omitempty"`
+		Categories   []CategoriesInfo   `json:"categories,omitempty"`
+		// Files        []ProductFile      `json:"files,omitempty"`
+		// Favorites    *FavoritesStats    `json:"favorites,omitempty"`
 	}
 
 	// ProductsSearchResponse https://developers.ecwid.com/api-documentation/products#search-products

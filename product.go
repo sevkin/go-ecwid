@@ -142,6 +142,7 @@ func (c *Client) ProductDelete(productID uint64) error {
 // ProductInventoryAdjust increase or decrease the product’s stock quantity by a delta quantity
 func (c *Client) ProductInventoryAdjust(productID uint, quantityDelta int) (int, error) {
 	response, err := c.R().
+		SetHeader("Content-Type", "application/json").
 		SetBody(fmt.Sprintf(`{"quantityDelta":%d}`, quantityDelta)).
 		Put(fmt.Sprintf("/products/%d/inventory", productID))
 

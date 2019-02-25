@@ -1,5 +1,6 @@
-// Product types (or product classes) are groups of products which share the same attributes.
 package ecwid
+
+// Product types (or product classes) are groups of products which share the same attributes.
 
 import "fmt"
 

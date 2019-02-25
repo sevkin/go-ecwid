@@ -1,6 +1,7 @@
 package ecwid
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 )
@@ -60,6 +61,37 @@ func (c *Client) CategoriesGet(filter map[string]string) (*CategoriesGetResponse
 
 	var result CategoriesGetResponse
 	return &result, responseUnmarshal(response, err, &result)
+}
+
+// Categories 'iterable' by filtered store categories
+func (c *Client) Categories(ctx context.Context, filter map[string]string) <-chan *Category {
+	catChan := make(chan *Category)
+
+	go func(filter map[string]string) {
+		defer close(catChan)
+
+		for {
+			resp, err := c.CategoriesGet(filter)
+			if err != nil {
+				return
+			}
+
+			for _, category := range resp.Items {
+				select {
+				case <-ctx.Done():
+					return
+				case catChan <- category:
+				}
+			}
+
+			if resp.Offset+resp.Count >= resp.Total {
+				return
+			}
+			filter["offset"] = fmt.Sprintf("%d", resp.Offset+resp.Count)
+		}
+	}(filter)
+
+	return catChan
 }
 
 // CategoryGet gets all details of a specific category in an Ecwid store by its ID

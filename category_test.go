@@ -1,10 +1,12 @@
 package ecwid
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -52,6 +54,65 @@ func TestCategoriesGet(t *testing.T) {
 	assert.Equal(t, 2, len(result.Items))
 	assert.Equal(t, "one", result.Items[0].Name)
 	assert.Equal(t, url, result.Items[1].URL)
+}
+
+func TestCategories(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	const (
+		storeID = 666
+		token   = "token"
+	)
+
+	requestCount := 0
+
+	expected := []string{"one", "two", "tree"}
+
+	httpmock.RegisterNoResponder(
+		func(req *http.Request) (*http.Response, error) {
+			if requestCount < len(expected) {
+
+				requestCount++
+
+				values := req.URL.Query()
+				offset, _ := strconv.ParseUint(values.Get("offset"), 10, 64)
+				limit, _ := strconv.ParseUint(values.Get("limit"), 10, 64)
+
+				assert.Equal(t, uint64(requestCount), offset)
+				assert.Equal(t, uint64(1), limit)
+
+				return httpmock.NewJsonResponse(200, CategoriesGetResponse{
+					Total:  3,
+					Count:  1,
+					Offset: uint(offset),
+					Limit:  uint(limit),
+					Items: []*Category{
+						&Category{
+							NewCategory: &NewCategory{
+								Name: expected[offset],
+							},
+						},
+					},
+				})
+			}
+			return httpmock.NewStringResponse(400, "too many"), nil
+		})
+
+	// ctx, cancel := context.WithCancel(context.Background())
+	// defer cancel()
+
+	actual := make([]string, 0, 3)
+
+	for category := range New(storeID, token).Categories(context.Background(), // ctx,
+		map[string]string{
+			"offset": "1",
+			"limit":  "1",
+		}) {
+		actual = append(actual, category.Name)
+	}
+	assert.Equal(t, len(expected)-1, requestCount)
+	assert.Equal(t, expected[1:], actual)
 }
 
 func TestCategoryGet(t *testing.T) {

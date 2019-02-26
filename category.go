@@ -7,35 +7,28 @@ import (
 )
 
 type (
-	// TODO ImageDetails struct {
-	// 	URL    string `json:"url"`    //	string	Image URL
-	// 	Width  uint   `json:"width"`  //	integer	Image width
-	// 	Height uint   `json:"height"` //	integer	Image height
-	// }
-
 	// NewCategory https://developers.ecwid.com/api-documentation/categories#add-new-category
 	NewCategory struct {
-		Name string `json:"name,omitempty"`
-		// TODO ParentID can`t set to 0 (if omitempty) or 0 when not set on update
-		ParentID    uint64        `json:"parentId,omitempty"` // `json:"parentId"`
-		OrderBy     int           `json:"orderBy,omitempty"`
+		Name        string        `json:"name,omitempty"`
+		ParentID    uint64        `json:"parentId"`
+		OrderBy     int           `json:"orderBy"`
 		Description template.HTML `json:"description,omitempty"`
-		Enabled     bool          `json:"enabled,omitempty"`
+		Enabled     bool          `json:"enabled"`
 		ProductIDs  []uint64      `json:"productIds,omitempty"`
 	}
 
 	// Category https://developers.ecwid.com/api-documentation/categories#get-categories
 	Category struct {
-		*NewCategory
-		ID               uint64 `json:"id"`
-		HdThumbnailURL   string `json:"hdThumbnailUrl,omitempty"`
-		ThumbnailURL     string `json:"thumbnailUrl,omitempty"`
-		ImageURL         string `json:"imageUrl,omitempty"`
-		OriginalImageURL string `json:"originalImageUrl,omitempty"`
-		// OriginalImage       *ImageDetails `json:"originalImage,omitempty"`
-		URL                 string `json:"url,omitempty"`
-		ProductCount        uint   `json:"productCount,omitempty"`
-		EnabledProductCount uint   `json:"enabledProductCount,omitempty"`
+		NewCategory
+		ID                  uint64        `json:"id"`
+		HdThumbnailURL      string        `json:"hdThumbnailUrl"`
+		ThumbnailURL        string        `json:"thumbnailUrl"`
+		ImageURL            string        `json:"imageUrl"`
+		OriginalImageURL    string        `json:"originalImageUrl"`
+		URL                 string        `json:"url"`
+		ProductCount        uint          `json:"productCount"`
+		EnabledProductCount uint          `json:"enabledProductCount"`
+		OriginalImage       *ImageDetails `json:"originalImage"`
 	}
 
 	// CategoriesGetResponse is basic details of found categories
@@ -120,7 +113,6 @@ func (c *Client) CategoryAdd(category *NewCategory) (uint64, error) {
 }
 
 // CategoryUpdate update an existing category in an Ecwid store referring to its ID
-// before update use CategoryGet to retrieve full data
 func (c *Client) CategoryUpdate(categoryID uint64, category *NewCategory) error {
 	response, err := c.R().
 		SetHeader("Content-Type", "application/json").

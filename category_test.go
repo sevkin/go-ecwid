@@ -89,7 +89,7 @@ func TestCategories(t *testing.T) {
 					Limit:  uint(limit),
 					Items: []*Category{
 						&Category{
-							NewCategory: &NewCategory{
+							NewCategory: NewCategory{
 								Name: expected[offset],
 							},
 						},

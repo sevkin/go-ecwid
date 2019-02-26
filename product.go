@@ -8,62 +8,59 @@ import (
 type (
 	// NewProduct https://developers.ecwid.com/api-documentation/products#add-a-product
 	NewProduct struct {
-		Name                  string        `json:"name,omitempty"` // mandatory for ProductAdd
-		Sku                   string        `json:"sku,omitempty"`
-		Quantity              int           `json:"quantity,omitempty"`
-		Unlimited             bool          `json:"unlimited,omitempty"`
-		Price                 float32       `json:"price,omitempty"`
-		CompareToPrice        float32       `json:"compareToPrice,omitempty"`
-		IsShippingRequired    bool          `json:"isShippingRequired,omitempty"`
-		Weight                float32       `json:"weight,omitempty"`
-		ProductClassID        uint64        `json:"productClassId,omitempty"`
-		Created               string        `json:"created,omitempty"` // may be in Product not NewProduct
-		Enabled               bool          `json:"enabled,omitempty"`
-		WarningLimit          uint          `json:"warningLimit,omitempty"`
-		FixedShippingRateOnly bool          `json:"fixedShippingRateOnly,omitempty"`
-		FixedShippingRate     float32       `json:"fixedShippingRate,omitempty"`
-		Description           template.HTML `json:"description,omitempty"`
-		SeoTitle              string        `json:"seoTitle,omitempty"`
-		SeoDescription        string        `json:"seoDescription,omitempty"`
-		DefaultCategoryID     uint64        `json:"defaultCategoryId,omitempty"`
-		ShowOnFrontpage       int           `json:"showOnFrontpage,omitempty"`
-
-		CategoryIDs     []uint64           `json:"categoryIds,omitempty"`
-		WholesalePrices []WholesalePrice   `json:"wholesalePrices,omitempty"`
-		Options         []ProductOption    `json:"options,omitempty"`
-		Attributes      []AttributeValue   `json:"attributes,omitempty"`
-		Tax             *TaxInfo           `json:"tax,omitempty"`
-		Shipping        *ShippingSettings  `json:"shipping,omitempty"`
-		RelatedProducts *RelatedProducts   `json:"relatedProducts,omitempty"`
-		Dimensions      *ProductDimensions `json:"dimensions,omitempty"`
-
-		Media *ProductMedia `json:"media,omitempty"` // ProductUpdate, ProductGet ProductsSearch
-		// GalleryImages []GalleryImage `json:"galleryImages,omitempty"` // only ProductUpdate
+		Name                  string             `json:"name,omitempty"` // mandatory for ProductAdd
+		Sku                   string             `json:"sku,omitempty"`
+		Quantity              int                `json:"quantity"`
+		Unlimited             bool               `json:"unlimited"`
+		Price                 float32            `json:"price,omitempty"`
+		CompareToPrice        float32            `json:"compareToPrice,omitempty"`
+		IsShippingRequired    bool               `json:"isShippingRequired"`
+		Weight                float32            `json:"weight,omitempty"`
+		ProductClassID        uint64             `json:"productClassId"`
+		Created               string             `json:"created,omitempty"`
+		Enabled               bool               `json:"enabled"`
+		WarningLimit          uint               `json:"warningLimit"`
+		FixedShippingRateOnly bool               `json:"fixedShippingRateOnly"`
+		FixedShippingRate     float32            `json:"fixedShippingRate,omitempty"`
+		Description           template.HTML      `json:"description,omitempty"`
+		SeoTitle              string             `json:"seoTitle,omitempty"`
+		SeoDescription        string             `json:"seoDescription,omitempty"`
+		DefaultCategoryID     uint64             `json:"defaultCategoryId"`
+		ShowOnFrontpage       int                `json:"showOnFrontpage"`
+		CategoryIDs           []uint64           `json:"categoryIds,omitempty"`
+		WholesalePrices       []WholesalePrice   `json:"wholesalePrices,omitempty"`
+		Options               []ProductOption    `json:"options,omitempty"`
+		Attributes            []AttributeValue   `json:"attributes,omitempty"`
+		Tax                   *TaxInfo           `json:"tax"`
+		Shipping              *ShippingSettings  `json:"shipping"`
+		RelatedProducts       *RelatedProducts   `json:"relatedProducts"`
+		Dimensions            *ProductDimensions `json:"dimensions"`
+		Media                 *ProductMedia      `json:"media"` // ProductUpdate, ProductGet ProductsSearch
+		// GalleryImages         []GalleryImage     `json:"galleryImages,omitempty"` // only ProductUpdate
 	}
 
 	// Product https://developers.ecwid.com/api-documentation/products#get-a-product
 	Product struct {
-		*NewProduct
-		ID                                     uint64  `json:"id"`
-		InStock                                bool    `json:"inStock,omitempty"`
-		DefaultDisplayedPrice                  float32 `json:"defaultDisplayedPrice,omitempty"`
-		DefaultDisplayedPriceFormatted         string  `json:"defaultDisplayedPriceFormatted,omitempty"`
-		CompareToPriceFormatted                string  `json:"compareToPriceFormatted,omitempty"`
-		CompareToPriceDiscount                 float32 `json:"compareToPriceDiscount,omitempty"`
-		CompareToPriceDiscountFormatted        string  `json:"compareToPriceDiscountFormatted,omitempty"`
-		CompareToPriceDiscountPercent          float32 `json:"compareToPriceDiscountPercent,omitempty"`
-		CompareToPriceDiscountPercentFormatted string  `json:"compareToPriceDiscountPercentFormatted,omitempty"`
-		URL                                    string  `json:"url,omitempty"`
-		Updated                                string  `json:"updated,omitempty"`
-		CreateTimestamp                        uint    `json:"createTimestamp,omitempty"`
-		UpdateTimestamp                        uint    `json:"updateTimestamp,omitempty"`
-		DefaultCombinationID                   uint64  `json:"defaultCombinationId,omitempty"`
-		IsSampleProduct                        bool    `json:"isSampleProduct,omitempty"`
-
-		Combinations []ProductVariation `json:"combinations,omitempty"`
-		Categories   []CategoriesInfo   `json:"categories,omitempty"`
-		// Files        []ProductFile      `json:"files,omitempty"`
-		// Favorites    *FavoritesStats    `json:"favorites,omitempty"`
+		NewProduct
+		ID                                     uint64             `json:"id"`
+		InStock                                bool               `json:"inStock"`
+		DefaultDisplayedPrice                  float32            `json:"defaultDisplayedPrice"`
+		DefaultDisplayedPriceFormatted         string             `json:"defaultDisplayedPriceFormatted"`
+		CompareToPriceFormatted                string             `json:"compareToPriceFormatted"`
+		CompareToPriceDiscount                 float32            `json:"compareToPriceDiscount"`
+		CompareToPriceDiscountFormatted        string             `json:"compareToPriceDiscountFormatted"`
+		CompareToPriceDiscountPercent          float32            `json:"compareToPriceDiscountPercent"`
+		CompareToPriceDiscountPercentFormatted string             `json:"compareToPriceDiscountPercentFormatted"`
+		URL                                    string             `json:"url"`
+		Updated                                string             `json:"updated"`
+		CreateTimestamp                        uint               `json:"createTimestamp"`
+		UpdateTimestamp                        uint               `json:"updateTimestamp"`
+		DefaultCombinationID                   uint64             `json:"defaultCombinationId"`
+		IsSampleProduct                        bool               `json:"isSampleProduct"`
+		Combinations                           []ProductVariation `json:"combinations"`
+		Categories                             []CategoriesInfo   `json:"categories"`
+		// Files                                  []ProductFile      `json:"files"`
+		// Favorites                              *FavoritesStats    `json:"favorites"`
 	}
 
 	// ProductsSearchResponse https://developers.ecwid.com/api-documentation/products#search-products
@@ -118,7 +115,6 @@ func (c *Client) ProductAdd(product *NewProduct) (uint64, error) {
 }
 
 // ProductUpdate update an existing product in an Ecwid store referring to its ID
-// before update use ProductGet to retrieve full data
 func (c *Client) ProductUpdate(productID uint64, product *NewProduct) error {
 	response, err := c.R().
 		SetHeader("Content-Type", "application/json").

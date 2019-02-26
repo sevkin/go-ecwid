@@ -104,15 +104,19 @@ func TestCategories(t *testing.T) {
 
 	actual := make([]string, 0, 3)
 
+	filter := map[string]string{
+		"offset": "1",
+		"limit":  "1",
+	}
+
 	for category := range New(storeID, token).Categories(context.Background(), // ctx,
-		map[string]string{
-			"offset": "1",
-			"limit":  "1",
-		}) {
+		filter) {
 		actual = append(actual, category.Name)
 	}
 	assert.Equal(t, len(expected)-1, requestCount)
 	assert.Equal(t, expected[1:], actual)
+
+	assert.Equal(t, "1", filter["offset"], "filter map must be unchanged")
 }
 
 func TestCategoryGet(t *testing.T) {

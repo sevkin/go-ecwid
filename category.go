@@ -67,6 +67,11 @@ func (c *Client) CategoriesGet(filter map[string]string) (*CategoriesGetResponse
 func (c *Client) Categories(ctx context.Context, filter map[string]string) <-chan *Category {
 	catChan := make(chan *Category)
 
+	filterCopy := make(map[string]string)
+	for k, v := range filter {
+		filterCopy[k] = v
+	}
+
 	go func(filter map[string]string) {
 		defer close(catChan)
 
@@ -89,7 +94,7 @@ func (c *Client) Categories(ctx context.Context, filter map[string]string) <-cha
 			}
 			filter["offset"] = fmt.Sprintf("%d", resp.Offset+resp.Count)
 		}
-	}(filter)
+	}(filterCopy)
 
 	return catChan
 }

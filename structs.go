@@ -33,7 +33,30 @@ type (
 		Price    float32 `json:"price,omitempty"`
 	}
 
-	// //
+	// too bad design for Attribute //
+
+	// for ProductAdd, ProductUpdate
+	// ID    uint64
+	// Alias string
+	// Value string
+
+	// for ProductGet, ProductSearch
+	// ID    uint64
+	// Name  string
+	// Value string
+	// Type  string
+	// Show  string
+
+	// for ProductTypeGet, ProductTypesGet
+	// ID    uint64
+	// Name  string
+	// Type  string
+	// Show  string
+
+	// for ProductTypeAdd
+	// Name  string
+	// Type  string
+	// Show  string
 
 	Attribute struct {
 		ID    uint64 `json:"id,omitempty"` // mandatory for update exist attributes can`t be 0
@@ -41,10 +64,6 @@ type (
 		Alias string `json:"alias,omitempty"`
 		Type  string `json:"type,omitempty"` // CUSTOM, UPC, BRAND, GENDER, AGE_GROUP, COLOR, SIZE, PRICE_PER_UNIT, UNITS_IN_PRODUCT
 		Show  string `json:"show,omitempty"` // NOTSHOW, DESCR, PRICE
-	}
-
-	AttributeValue struct {
-		Attribute
 		Value string `json:"value,omitempty"`
 	}
 
@@ -117,7 +136,7 @@ type (
 
 		Options         []OptionValue    `json:"options,omitempty"`
 		WholesalePrices []WholesalePrice `json:"wholesalePrices,omitempty"`
-		Attributes      []AttributeValue `json:"attributes,omitempty"`
+		Attributes      []Attribute      `json:"attributes,omitempty"`
 	}
 
 	// FavoritesStats struct {

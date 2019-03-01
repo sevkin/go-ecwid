@@ -35,7 +35,8 @@ type (
 		Shipping              *ShippingSettings  `json:"shipping"`
 		RelatedProducts       *RelatedProducts   `json:"relatedProducts"`
 		Dimensions            *ProductDimensions `json:"dimensions"`
-		Media                 *ProductMedia      `json:"media"` // ProductUpdate, ProductGet ProductsSearch
+		// FIXME Media unmarshal error
+		// Media                 *ProductMedia      `json:"media"` // ProductUpdate, ProductGet ProductsSearch
 		// GalleryImages         []GalleryImage     `json:"galleryImages,omitempty"` // only ProductUpdate
 	}
 

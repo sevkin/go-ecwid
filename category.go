@@ -71,7 +71,7 @@ func (c *Client) Categories(ctx context.Context, filter map[string]string) <-cha
 		for {
 			resp, err := c.CategoriesGet(filter)
 			if err != nil {
-				return
+				return // FIXME silent error. maybe catChan <- nil ?
 			}
 
 			for _, category := range resp.Items {

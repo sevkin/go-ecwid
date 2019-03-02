@@ -7,9 +7,9 @@ import "fmt"
 type (
 	// ProductType https://developers.ecwid.com/api-documentation/product-types#get-product-type
 	ProductType struct {
-		ID         uint64      `json:"id,omitempty"` // mandatory for update
-		Name       string      `json:"name,omitempty"`
-		Attributes []Attribute `json:"attributes,omitempty"`
+		ID         uint64     `json:"id,omitempty"` // mandatory for update
+		Name       string     `json:"name,omitempty"`
+		Attributes Attributes `json:"attributes,omitempty"`
 	}
 
 	// ProductTypesResponse https://developers.ecwid.com/api-documentation/product-types#get-product-types

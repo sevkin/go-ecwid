@@ -30,7 +30,7 @@ type (
 		CategoryIDs           []uint64           `json:"categoryIds,omitempty"`
 		WholesalePrices       []WholesalePrice   `json:"wholesalePrices,omitempty"`
 		Options               []ProductOption    `json:"options,omitempty"`
-		Attributes            []Attribute        `json:"attributes,omitempty"`
+		Attributes            Attributes         `json:"attributes,omitempty"`
 		Tax                   *TaxInfo           `json:"tax"`
 		Shipping              *ShippingSettings  `json:"shipping"`
 		RelatedProducts       *RelatedProducts   `json:"relatedProducts"`

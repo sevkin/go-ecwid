@@ -26,7 +26,7 @@ type (
 		SeoTitle              string             `json:"seoTitle,omitempty"`
 		SeoDescription        string             `json:"seoDescription,omitempty"`
 		DefaultCategoryID     uint64             `json:"defaultCategoryId"`
-		ShowOnFrontpage       int                `json:"showOnFrontpage"`
+		ShowOnFrontpage       int                `json:"showOnFrontpage,omitempty"`
 		CategoryIDs           []uint64           `json:"categoryIds,omitempty"`
 		WholesalePrices       []WholesalePrice   `json:"wholesalePrices,omitempty"`
 		Options               []ProductOption    `json:"options,omitempty"`

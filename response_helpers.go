@@ -66,17 +66,17 @@ func responseUpdate(response *resty.Response, err error) error {
 	return nil
 }
 
-func responseDelete(response *resty.Response, err error) error {
+func responseDelete(response *resty.Response, err error) (uint, error) {
 	var result struct {
 		DeleteCount uint `json:"deleteCount"`
 	}
 
 	if err := responseUnmarshal(response, err, &result); err != nil {
-		return err
+		return 0, err
 	}
 
-	if result.DeleteCount != 1 {
-		return errors.New("no deleted")
+	if result.DeleteCount == 0 {
+		return 0, errors.New("no deleted")
 	}
-	return nil
+	return result.DeleteCount, nil
 }

@@ -42,5 +42,6 @@ func (c *Client) ProductImageDelete(productID uint64) error {
 	response, err := c.R().
 		Delete(fmt.Sprintf("/products/%d/image", productID))
 
-	return responseDelete(response, err)
+	_, err = responseDelete(response, err)
+	return err
 }

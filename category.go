@@ -127,5 +127,6 @@ func (c *Client) CategoryDelete(categoryID uint64) error {
 	response, err := c.R().
 		Delete(fmt.Sprintf("/categories/%d", categoryID))
 
-	return responseDelete(response, err)
+	_, err = responseDelete(response, err)
+	return err
 }

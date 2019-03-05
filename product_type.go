@@ -66,5 +66,6 @@ func (c *Client) ProductTypeDelete(productClassID uint64) error {
 	response, err := c.R().
 		Delete(fmt.Sprintf("/classes/%d", productClassID))
 
-	return responseDelete(response, err)
+	_, err = responseDelete(response, err)
+	return err
 }

@@ -133,7 +133,8 @@ func (c *Client) ProductDelete(productID uint64) error {
 	response, err := c.R().
 		Delete(fmt.Sprintf("/products/%d", productID))
 
-	return responseDelete(response, err)
+	_, err = responseDelete(response, err)
+	return err
 }
 
 // ProductInventoryAdjust increase or decrease the product’s stock quantity by a delta quantity

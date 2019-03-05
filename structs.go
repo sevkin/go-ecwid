@@ -56,14 +56,14 @@ type (
 	}
 
 	ProductImage struct {
-		ID               uint64 `json:"id"`
-		OrderBy          uint   `json:"orderBy"`
-		IsMain           bool   `json:"isMain"`
-		Image160pxURL    string `json:"image160pxUrl,omitempty"`
-		Image400pxURL    string `json:"image400pxUrl,omitempty"`
-		Image800pxURL    string `json:"image800pxUrl,omitempty"`
-		Image1500pxURL   string `json:"image1500pxUrl,omitempty"`
-		ImageOriginalURL string `json:"imageOriginalUrl,omitempty"`
+		ID               *string `json:"id"`
+		OrderBy          *uint   `json:"orderBy"`
+		IsMain           *bool   `json:"isMain"`
+		Image160pxURL    string  `json:"image160pxUrl,omitempty"`
+		Image400pxURL    string  `json:"image400pxUrl,omitempty"`
+		Image800pxURL    string  `json:"image800pxUrl,omitempty"`
+		Image1500pxURL   string  `json:"image1500pxUrl,omitempty"`
+		ImageOriginalURL string  `json:"imageOriginalUrl,omitempty"`
 	}
 
 	ProductMedia struct {

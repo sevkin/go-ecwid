@@ -1,6 +1,7 @@
 package ecwid
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 )
@@ -92,6 +93,42 @@ func (c *Client) ProductsSearch(filter map[string]string) (*ProductsSearchRespon
 
 	var result ProductsSearchResponse
 	return &result, responseUnmarshal(response, err, &result)
+}
+
+// Products 'iterable' by filtered store products
+func (c *Client) Products(ctx context.Context, filter map[string]string) <-chan *Product {
+	prodChan := make(chan *Product)
+
+	filterCopy := make(map[string]string)
+	for k, v := range filter {
+		filterCopy[k] = v
+	}
+
+	go func(filter map[string]string) {
+		defer close(prodChan)
+
+		for {
+			resp, err := c.ProductsSearch(filter)
+			if err != nil {
+				return // FIXME silent error. maybe prodChan <- nil ?
+			}
+
+			for _, product := range resp.Products {
+				select {
+				case <-ctx.Done():
+					return
+				case prodChan <- product:
+				}
+			}
+
+			if resp.Offset+resp.Count >= resp.Total {
+				return
+			}
+			filter["offset"] = fmt.Sprintf("%d", resp.Offset+resp.Count)
+		}
+	}(filterCopy)
+
+	return prodChan
 }
 
 // ProductGet gets all details of a specific product in an Ecwid store by its ID

@@ -1,10 +1,12 @@
 package ecwid
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -48,6 +50,69 @@ func TestProductsSearchRequest(t *testing.T) {
 }
 
 // TODO TestProductsSearchResponse
+
+func TestProducts(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	const (
+		storeID = 666
+		token   = "token"
+	)
+
+	requestCount := 0
+
+	expected := []string{"one", "two", "tree"}
+
+	httpmock.RegisterNoResponder(
+		func(req *http.Request) (*http.Response, error) {
+			if requestCount < len(expected) {
+
+				requestCount++
+
+				values := req.URL.Query()
+				offset, _ := strconv.ParseUint(values.Get("offset"), 10, 64)
+				limit, _ := strconv.ParseUint(values.Get("limit"), 10, 64)
+
+				assert.Equal(t, uint64(requestCount), offset)
+				assert.Equal(t, uint64(1), limit)
+
+				return httpmock.NewJsonResponse(200, ProductsSearchResponse{
+					Total:  3,
+					Count:  1,
+					Offset: uint(offset),
+					Limit:  uint(limit),
+					Products: []*Product{
+						&Product{
+							NewProduct: NewProduct{
+								Name: expected[offset],
+							},
+						},
+					},
+				})
+			}
+			return httpmock.NewStringResponse(400, "too many"), nil
+		})
+
+	// ctx, cancel := context.WithCancel(context.Background())
+	// defer cancel()
+
+	actual := make([]string, 0, 3)
+
+	filter := map[string]string{
+		"offset": "1",
+		"limit":  "1",
+	}
+
+	for product := range New(storeID, token).Products(context.Background(), // ctx,
+		filter) {
+		actual = append(actual, product.Name)
+	}
+	assert.Equal(t, len(expected)-1, requestCount)
+	assert.Equal(t, expected[1:], actual)
+
+	assert.Equal(t, "1", filter["offset"], "filter map must be unchanged")
+}
 
 func TestProductGet(t *testing.T) {
 	httpmock.Activate()

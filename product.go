@@ -53,8 +53,8 @@ type (
 		CompareToPriceDiscountPercentFormatted string             `json:"compareToPriceDiscountPercentFormatted"`
 		URL                                    string             `json:"url"`
 		Updated                                string             `json:"updated"`
-		CreateTimestamp                        uint               `json:"createTimestamp"`
-		UpdateTimestamp                        uint               `json:"updateTimestamp"`
+		CreateTimestamp                        uint64             `json:"createTimestamp"`
+		UpdateTimestamp                        uint64             `json:"updateTimestamp"`
 		DefaultCombinationID                   uint64             `json:"defaultCombinationId"`
 		IsSampleProduct                        bool               `json:"isSampleProduct"`
 		Combinations                           []ProductVariation `json:"combinations"`

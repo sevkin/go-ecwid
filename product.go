@@ -2,6 +2,7 @@ package ecwid
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"html/template"
 )
@@ -99,36 +100,47 @@ func (c *Client) ProductsSearch(filter map[string]string) (*ProductsSearchRespon
 func (c *Client) Products(ctx context.Context, filter map[string]string) <-chan *Product {
 	prodChan := make(chan *Product)
 
+	go func() {
+		defer close(prodChan)
+
+		c.ProductsTrampoline(filter, func(index int, product *Product) error {
+			// FIXME silent error. maybe prodChan <- nil ?
+			select {
+			case <-ctx.Done():
+				return errors.New("break")
+			case prodChan <- product:
+			}
+			return nil
+		})
+	}()
+
+	return prodChan
+}
+
+// ProductsTrampoline call on each products
+func (c *Client) ProductsTrampoline(filter map[string]string, fn func(int, *Product) error) error {
 	filterCopy := make(map[string]string)
 	for k, v := range filter {
 		filterCopy[k] = v
 	}
 
-	go func(filter map[string]string) {
-		defer close(prodChan)
-
-		for {
-			resp, err := c.ProductsSearch(filter)
-			if err != nil {
-				return // FIXME silent error. maybe prodChan <- nil ?
-			}
-
-			for _, product := range resp.Products {
-				select {
-				case <-ctx.Done():
-					return
-				case prodChan <- product:
-				}
-			}
-
-			if resp.Offset+resp.Count >= resp.Total {
-				return
-			}
-			filter["offset"] = fmt.Sprintf("%d", resp.Offset+resp.Count)
+	for {
+		resp, err := c.ProductsSearch(filterCopy)
+		if err != nil {
+			return err
 		}
-	}(filterCopy)
 
-	return prodChan
+		for index, product := range resp.Products {
+			if err := fn(index, product); err != nil {
+				return err
+			}
+		}
+
+		if resp.Offset+resp.Count >= resp.Total {
+			return nil
+		}
+		filterCopy["offset"] = fmt.Sprintf("%d", resp.Offset+resp.Count)
+	}
 }
 
 // ProductGet gets all details of a specific product in an Ecwid store by its ID

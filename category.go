@@ -2,6 +2,7 @@ package ecwid
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"html/template"
 )
@@ -60,36 +61,47 @@ func (c *Client) CategoriesGet(filter map[string]string) (*CategoriesGetResponse
 func (c *Client) Categories(ctx context.Context, filter map[string]string) <-chan *Category {
 	catChan := make(chan *Category)
 
+	go func() {
+		defer close(catChan)
+
+		c.CategoriesTrampoline(filter, func(index int, category *Category) error {
+			// FIXME silent error. maybe catChan <- nil ?
+			select {
+			case <-ctx.Done():
+				return errors.New("break")
+			case catChan <- category:
+			}
+			return nil
+		})
+	}()
+
+	return catChan
+}
+
+// CategoriesTrampoline call on each category
+func (c *Client) CategoriesTrampoline(filter map[string]string, fn func(int, *Category) error) error {
 	filterCopy := make(map[string]string)
 	for k, v := range filter {
 		filterCopy[k] = v
 	}
 
-	go func(filter map[string]string) {
-		defer close(catChan)
-
-		for {
-			resp, err := c.CategoriesGet(filter)
-			if err != nil {
-				return // FIXME silent error. maybe catChan <- nil ?
-			}
-
-			for _, category := range resp.Items {
-				select {
-				case <-ctx.Done():
-					return
-				case catChan <- category:
-				}
-			}
-
-			if resp.Offset+resp.Count >= resp.Total {
-				return
-			}
-			filter["offset"] = fmt.Sprintf("%d", resp.Offset+resp.Count)
+	for {
+		resp, err := c.CategoriesGet(filterCopy)
+		if err != nil {
+			return err
 		}
-	}(filterCopy)
 
-	return catChan
+		for index, category := range resp.Items {
+			if err := fn(index, category); err != nil {
+				return err
+			}
+		}
+
+		if resp.Offset+resp.Count >= resp.Total {
+			return nil
+		}
+		filterCopy["offset"] = fmt.Sprintf("%d", resp.Offset+resp.Count)
+	}
 }
 
 // CategoryGet gets all details of a specific category in an Ecwid store by its ID

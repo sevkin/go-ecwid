@@ -4,14 +4,22 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestAttributesUnmarshalJSON(t *testing.T) {
+type AttributeTestSuite struct {
+	suite.Suite
+}
+
+func TestAttributeTestSuite(t *testing.T) {
+	suite.Run(t, new(AttributeTestSuite))
+}
+
+func (suite *AttributeTestSuite) TestAttributesUnmarshalJSON() {
 	var av Attributes
 	err := json.Unmarshal([]byte(`[{"id":1,"name":"n1","value":"v1"}]`), &av)
-	assert.Nil(t, err)
-	assert.Equal(t, Attributes{
+	suite.Nil(err)
+	suite.Equal(Attributes{
 		attributes: []Attribute{
 			Attribute{
 				ID:    1,
@@ -22,7 +30,7 @@ func TestAttributesUnmarshalJSON(t *testing.T) {
 	}, av)
 }
 
-func TestAttributesMarshalJSON(t *testing.T) {
+func (suite *AttributeTestSuite) TestAttributesMarshalJSON() {
 	av := Attributes{
 		attributes: []Attribute{
 			Attribute{
@@ -33,8 +41,8 @@ func TestAttributesMarshalJSON(t *testing.T) {
 		},
 	}
 	b, err := json.Marshal(&av)
-	assert.Nil(t, err)
-	assert.Equal(t, []byte(`[{"id":1,"name":"n1","value":"v1"}]`), b)
+	suite.Nil(err)
+	suite.Equal([]byte(`[{"id":1,"name":"n1","value":"v1"}]`), b)
 }
 
 func fixtureAttributes() []Attribute {
@@ -52,98 +60,98 @@ func fixtureAttributes() []Attribute {
 	}
 }
 
-func TestAttributesGetByName(t *testing.T) {
+func (suite *AttributeTestSuite) TestAttributesGetByName() {
 	av := Attributes{
 		attributes: fixtureAttributes(),
 	}
 
 	// found
 	a := av.GetByName("n2")
-	assert.NotNil(t, a)
-	assert.Equal(t, "v2", a.Value)
-	assert.Equal(t, &av.attributes[1], a)
+	suite.NotNil(a)
+	suite.Equal("v2", a.Value)
+	suite.Equal(&av.attributes[1], a)
 	a.Value = "new2"
-	assert.Equal(t, "new2", av.attributes[1].Value)
+	suite.Equal("new2", av.attributes[1].Value)
 
 	// not found
 	a = av.GetByName("n3")
-	assert.Nil(t, a)
+	suite.Nil(a)
 }
 
-func TestAttributesGetByID(t *testing.T) {
+func (suite *AttributeTestSuite) TestAttributesGetByID() {
 	av := Attributes{
 		attributes: fixtureAttributes(),
 	}
 
 	// found
 	a := av.GetByID(2)
-	assert.NotNil(t, a)
-	assert.Equal(t, "v2", a.Value)
-	assert.Equal(t, &av.attributes[1], a)
+	suite.NotNil(a)
+	suite.Equal("v2", a.Value)
+	suite.Equal(&av.attributes[1], a)
 	a.Value = "new2"
-	assert.Equal(t, "new2", av.attributes[1].Value)
+	suite.Equal("new2", av.attributes[1].Value)
 
 	// not found
 	a = av.GetByID(3)
-	assert.Nil(t, a)
+	suite.Nil(a)
 }
 
-func TestAttributesDelete(t *testing.T) {
+func (suite *AttributeTestSuite) TestAttributesDelete() {
 	av := Attributes{
 		attributes: fixtureAttributes(),
 	}
 	// by ref
-	assert.True(t, av.Delete(av.GetByName("n2")))
-	assert.Equal(t, 1, len(av.attributes))
-	assert.Equal(t, "v1", av.attributes[0].Value)
+	suite.True(av.Delete(av.GetByName("n2")))
+	suite.Equal(1, len(av.attributes))
+	suite.Equal("v1", av.attributes[0].Value)
 
 	// else
-	assert.False(t, av.Delete(&Attribute{}))
-	assert.Equal(t, 1, len(av.attributes))
+	suite.False(av.Delete(&Attribute{}))
+	suite.Equal(1, len(av.attributes))
 
-	assert.False(t, av.Delete(nil))
-	assert.Equal(t, 1, len(av.attributes))
+	suite.False(av.Delete(nil))
+	suite.Equal(1, len(av.attributes))
 }
 
-func TestAttributesAppend(t *testing.T) {
+func (suite *AttributeTestSuite) TestAttributesAppend() {
 	av := Attributes{
 		attributes: fixtureAttributes(),
 	}
 
 	a := av.Append(nil)
-	assert.NotNil(t, a)
-	assert.Equal(t, 3, len(av.attributes))
+	suite.NotNil(a)
+	suite.Equal(3, len(av.attributes))
 	a.Value = "new3"
-	assert.Equal(t, "new3", av.attributes[len(av.attributes)-1].Value)
+	suite.Equal("new3", av.attributes[len(av.attributes)-1].Value)
 
 	a = av.Append(&Attribute{
 		Name:  "n4",
 		Value: "v4",
 	})
-	assert.NotNil(t, a)
-	assert.Equal(t, 4, len(av.attributes))
+	suite.NotNil(a)
+	suite.Equal(4, len(av.attributes))
 	a.Value = "new4"
-	assert.Equal(t, "new4", av.attributes[len(av.attributes)-1].Value)
+	suite.Equal("new4", av.attributes[len(av.attributes)-1].Value)
 }
 
-func TestAttributesCopyTo(t *testing.T) {
+func (suite *AttributeTestSuite) TestAttributesCopyTo() {
 	av := Attributes{
 		attributes: fixtureAttributes(),
 	}
 	dest := Attributes{}
 	av.CopyTo(&dest)
 
-	assert.Equal(t, av.attributes, dest.attributes)
+	suite.Equal(av.attributes, dest.attributes)
 
 	dest.attributes[0].Value = "new1"
-	assert.NotEqual(t, av.attributes, dest.attributes)
+	suite.NotEqual(av.attributes, dest.attributes)
 }
 
-func TestAttributesIsEqualTo(t *testing.T) {
+func (suite *AttributeTestSuite) TestAttributesIsEqualTo() {
 
 	a := Attributes{attributes: fixtureAttributes()}
 	a1 := Attributes{attributes: fixtureAttributes()}
-	assert.True(t, a.IsEqualTo(&a1))
+	suite.True(a.IsEqualTo(&a1))
 
 	a2 := Attributes{attributes: []Attribute{
 		Attribute{
@@ -157,19 +165,19 @@ func TestAttributesIsEqualTo(t *testing.T) {
 			Value: "v1",
 		},
 	}}
-	assert.True(t, a.IsEqualTo(&a2))
+	suite.True(a.IsEqualTo(&a2))
 
 	a3 := Attributes{attributes: fixtureAttributes()}
 	a3.attributes[0].ID = 3
-	assert.False(t, a.IsEqualTo(&a3))
+	suite.False(a.IsEqualTo(&a3))
 
 	a4 := Attributes{attributes: fixtureAttributes()}
 	a4.attributes[0].Name = "n3"
-	assert.False(t, a.IsEqualTo(&a4))
+	suite.False(a.IsEqualTo(&a4))
 
 	a5 := Attributes{attributes: fixtureAttributes()}
 	a5.attributes[0].Value = "v3"
-	assert.False(t, a.IsEqualTo(&a5))
+	suite.False(a.IsEqualTo(&a5))
 
 	a6 := Attributes{attributes: []Attribute{
 		Attribute{
@@ -178,5 +186,5 @@ func TestAttributesIsEqualTo(t *testing.T) {
 			Value: "v1",
 		},
 	}}
-	assert.False(t, a.IsEqualTo(&a6))
+	suite.False(a.IsEqualTo(&a6))
 }

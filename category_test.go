@@ -11,17 +11,20 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestCategoriesGet(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+type CategoryTestSuite struct {
+	ClientTestSuite
+}
 
+func TestCategoryTestSuite(t *testing.T) {
+	suite.Run(t, new(CategoryTestSuite))
+}
+
+func (suite *CategoryTestSuite) TestCategoriesGet() {
 	const (
-		storeID = 666
-		token   = "token"
-		url     = "http://example.org/cat"
+		url = "http://example.org/cat"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/categories", storeID)
@@ -31,40 +34,32 @@ func TestCategoriesGet(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "GET", req.Method, "request method")
+			suite.Equal("GET", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
 
 			values := req.URL.Query()
-			assert.Equal(t, "0", values.Get("parent"), "parent")
-			assert.Equal(t, "5", values.Get("limit"), "limit")
+			suite.Equal("0", values.Get("parent"), "parent")
+			suite.Equal("5", values.Get("limit"), "limit")
 
 			return httpmock.NewStringResponse(200, `{"total":2,"count":2,"offset":0,"limit":100,"items":[{"id": 1, "name": "one"},{"id": 2, "url": "`+url+`"}]}`), nil
 		})
 
-	result, err := New(storeID, token).CategoriesGet(map[string]string{
+	result, err := suite.client.CategoriesGet(map[string]string{
 		"parent": "0",
 		"limit":  "5",
 	})
-	assert.Truef(t, requested, "request failed")
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
-	assert.NotNil(t, result)
+	suite.Nil(err)
+	suite.NotNil(result)
 
-	assert.Equal(t, 2, len(result.Items))
-	assert.Equal(t, "one", result.Items[0].Name)
-	assert.Equal(t, url, result.Items[1].URL)
+	suite.Equal(2, len(result.Items))
+	suite.Equal("one", result.Items[0].Name)
+	suite.Equal(url, result.Items[1].URL)
 }
 
-func TestCategories(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
-	const (
-		storeID = 666
-		token   = "token"
-	)
-
+func (suite *CategoryTestSuite) TestCategories() {
 	requestCount := 0
 
 	expected := []string{"one", "two", "tree"}
@@ -79,8 +74,8 @@ func TestCategories(t *testing.T) {
 				offset, _ := strconv.ParseUint(values.Get("offset"), 10, 64)
 				limit, _ := strconv.ParseUint(values.Get("limit"), 10, 64)
 
-				assert.Equal(t, uint64(requestCount), offset)
-				assert.Equal(t, uint64(1), limit)
+				suite.Equal(uint64(requestCount), offset)
+				suite.Equal(uint64(1), limit)
 
 				return httpmock.NewJsonResponse(200, CategoriesGetResponse{
 					Total:  3,
@@ -109,24 +104,19 @@ func TestCategories(t *testing.T) {
 		"limit":  "1",
 	}
 
-	for category := range New(storeID, token).Categories(context.Background(), // ctx,
+	for category := range suite.client.Categories(context.Background(), // ctx,
 		filter) {
 		actual = append(actual, category.Name)
 	}
-	assert.Equal(t, len(expected)-1, requestCount)
-	assert.Equal(t, expected[1:], actual)
+	suite.Equal(len(expected)-1, requestCount)
+	suite.Equal(expected[1:], actual)
 
-	assert.Equal(t, "1", filter["offset"], "filter map must be unchanged")
+	suite.Equal("1", filter["offset"], "filter map must be unchanged")
 }
 
-func TestCategoryGet(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *CategoryTestSuite) TestCategoryGet() {
 	const (
-		storeID    = 666
 		categoryID = 999
-		token      = "token"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/categories/%d", storeID, categoryID)
@@ -136,29 +126,24 @@ func TestCategoryGet(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "GET", req.Method, "request method")
+			suite.Equal("GET", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
 
 			return httpmock.NewStringResponse(200, fmt.Sprintf(`{"id":%d, "name":"name"}`, categoryID)), nil
 		})
 
-	c, err := New(storeID, token).CategoryGet(categoryID)
-	assert.Truef(t, requested, "request failed")
+	c, err := suite.client.CategoryGet(categoryID)
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
-	assert.Equal(t, uint64(categoryID), c.ID, "id")
-	assert.Equal(t, "name", c.Name, "name")
+	suite.Nil(err)
+	suite.Equal(uint64(categoryID), c.ID, "id")
+	suite.Equal("name", c.Name, "name")
 }
 
-func TestCategoryAdd(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *CategoryTestSuite) TestCategoryAdd() {
 	const (
-		storeID = 666
-		token   = "token"
-		name    = "new cat"
+		name = "new cat"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/categories", storeID)
@@ -168,35 +153,30 @@ func TestCategoryAdd(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "POST", req.Method, "request method")
+			suite.Equal("POST", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
-			assert.Equal(t, "application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal("application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
 
 			body, err := ioutil.ReadAll(req.Body)
-			assert.Nil(t, err)
+			suite.Nil(err)
 			var c NewCategory
 			err = json.Unmarshal(body, &c)
-			assert.Nil(t, err)
-			assert.Equal(t, name, c.Name, "name")
+			suite.Nil(err)
+			suite.Equal(name, c.Name, "name")
 
 			return httpmock.NewStringResponse(200, `{"id":999}`), nil
 		})
 
-	id, err := New(storeID, token).CategoryAdd(&NewCategory{Name: name})
-	assert.Truef(t, requested, "request failed")
+	id, err := suite.client.CategoryAdd(&NewCategory{Name: name})
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
-	assert.Equal(t, uint64(999), id, "id")
+	suite.Nil(err)
+	suite.Equal(uint64(999), id, "id")
 }
 
-func TestCategoryUpdate(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *CategoryTestSuite) TestCategoryUpdate() {
 	const (
-		storeID    = 666
-		token      = "token"
 		categoryID = 999
 		name       = "upd cat"
 	)
@@ -208,34 +188,29 @@ func TestCategoryUpdate(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "PUT", req.Method, "request method")
+			suite.Equal("PUT", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
-			assert.Equal(t, "application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal("application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
 
 			body, err := ioutil.ReadAll(req.Body)
-			assert.Nil(t, err)
+			suite.Nil(err)
 			var c NewCategory
 			err = json.Unmarshal(body, &c)
-			assert.Nil(t, err)
-			assert.Equal(t, name, c.Name, "name")
+			suite.Nil(err)
+			suite.Equal(name, c.Name, "name")
 
 			return httpmock.NewStringResponse(200, `{"updateCount":1}`), nil
 		})
 
-	err := New(storeID, token).CategoryUpdate(categoryID, &NewCategory{Name: name})
-	assert.Truef(t, requested, "request failed")
+	err := suite.client.CategoryUpdate(categoryID, &NewCategory{Name: name})
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
+	suite.Nil(err)
 }
 
-func TestCategoryDelete(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *CategoryTestSuite) TestCategoryDelete() {
 	const (
-		storeID    = 666
-		token      = "token"
 		categoryID = 999
 	)
 
@@ -246,15 +221,15 @@ func TestCategoryDelete(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "DELETE", req.Method, "request method")
+			suite.Equal("DELETE", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
 
 			return httpmock.NewStringResponse(200, `{"deleteCount":1}`), nil
 		})
 
-	err := New(storeID, token).CategoryDelete(categoryID)
-	assert.Truef(t, requested, "request failed")
+	err := suite.client.CategoryDelete(categoryID)
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
+	suite.Nil(err)
 }

@@ -6,25 +6,25 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestRequest(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+type EcwidTestSuite struct {
+	ClientTestSuite
+}
 
-	const (
-		storeID = 666
-		token   = "token"
-	)
+func TestEcwidTestSuite(t *testing.T) {
+	suite.Run(t, new(EcwidTestSuite))
+}
 
+func (suite *EcwidTestSuite) TestRequest() {
 	expectedEndpoint := fmt.Sprintf(endpoint+"/?token=%s", storeID, token)
 
 	httpmock.RegisterNoResponder(
 		func(req *http.Request) (*http.Response, error) {
-			assert.Equal(t, req.URL.String(), expectedEndpoint, "endpoint")
+			suite.Equal(req.URL.String(), expectedEndpoint, "endpoint")
 			return httpmock.NewStringResponse(200, ""), nil
 		})
 
-	New(storeID, token).R().Get("/")
+	suite.client.R().Get("/")
 }

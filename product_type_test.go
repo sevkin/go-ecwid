@@ -9,18 +9,18 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestProductTypesGet(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+type ProductTypeTestSuite struct {
+	ClientTestSuite
+}
 
-	const (
-		storeID = 666
-		token   = "token"
-	)
+func TestProductTypeTestSuite(t *testing.T) {
+	suite.Run(t, new(ProductTypeTestSuite))
+}
 
+func (suite *ProductTypeTestSuite) TestProductTypesGet() {
 	expectedEndpoint := fmt.Sprintf(endpoint+"/classes", storeID)
 	requested := false
 
@@ -28,32 +28,27 @@ func TestProductTypesGet(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "GET", req.Method, "request method")
+			suite.Equal("GET", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
 
 			return httpmock.NewStringResponse(200, `[{"id":1,"name":"aa"},{"id":2,"name":"bb"}]`), nil
 		})
 
-	result, err := New(storeID, token).ProductTypesGet()
-	assert.Truef(t, requested, "request failed")
+	result, err := suite.client.ProductTypesGet()
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
-	assert.NotNil(t, result)
+	suite.Nil(err)
+	suite.NotNil(result)
 
-	assert.Equal(t, 2, len(*result))
-	assert.Equal(t, "aa", (*result)[0].Name)
-	assert.Equal(t, "bb", (*result)[1].Name)
+	suite.Equal(2, len(*result))
+	suite.Equal("aa", (*result)[0].Name)
+	suite.Equal("bb", (*result)[1].Name)
 }
 
-func TestProductTypeGet(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *ProductTypeTestSuite) TestProductTypeGet() {
 	const (
-		storeID        = 666
 		productClassID = 999
-		token          = "token"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/classes/%d", storeID, productClassID)
@@ -63,29 +58,24 @@ func TestProductTypeGet(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "GET", req.Method, "request method")
+			suite.Equal("GET", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
 
 			return httpmock.NewStringResponse(200, fmt.Sprintf(`{"id":%d, "name":"name"}`, productClassID)), nil
 		})
 
-	result, err := New(storeID, token).ProductTypeGet(productClassID)
-	assert.Truef(t, requested, "request failed")
+	result, err := suite.client.ProductTypeGet(productClassID)
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
-	assert.Equal(t, uint64(productClassID), result.ID, "id")
-	assert.Equal(t, "name", result.Name, "name")
+	suite.Nil(err)
+	suite.Equal(uint64(productClassID), result.ID, "id")
+	suite.Equal("name", result.Name, "name")
 }
 
-func TestProductTypeAdd(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *ProductTypeTestSuite) TestProductTypeAdd() {
 	const (
-		storeID = 666
-		token   = "token"
-		name    = "new cls"
+		name = "new cls"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/classes", storeID)
@@ -95,35 +85,30 @@ func TestProductTypeAdd(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "POST", req.Method, "request method")
+			suite.Equal("POST", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
-			assert.Equal(t, "application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal("application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
 
 			body, err := ioutil.ReadAll(req.Body)
-			assert.Nil(t, err)
+			suite.Nil(err)
 			var request ProductType
 			err = json.Unmarshal(body, &request)
-			assert.Nil(t, err)
-			assert.Equal(t, name, request.Name, "name")
+			suite.Nil(err)
+			suite.Equal(name, request.Name, "name")
 
 			return httpmock.NewStringResponse(200, `{"id":999}`), nil
 		})
 
-	id, err := New(storeID, token).ProductTypeAdd(&ProductType{Name: name})
-	assert.Truef(t, requested, "request failed")
+	id, err := suite.client.ProductTypeAdd(&ProductType{Name: name})
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
-	assert.Equal(t, uint64(999), id, "id")
+	suite.Nil(err)
+	suite.Equal(uint64(999), id, "id")
 }
 
-func TestProductTypeUpdate(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *ProductTypeTestSuite) TestProductTypeUpdate() {
 	const (
-		storeID        = 666
-		token          = "token"
 		productClassID = 999
 		name           = "upd cat"
 	)
@@ -135,34 +120,29 @@ func TestProductTypeUpdate(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "PUT", req.Method, "request method")
+			suite.Equal("PUT", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
-			assert.Equal(t, "application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal("application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
 
 			body, err := ioutil.ReadAll(req.Body)
-			assert.Nil(t, err)
+			suite.Nil(err)
 			var request ProductType
 			err = json.Unmarshal(body, &request)
-			assert.Nil(t, err)
-			assert.Equal(t, name, request.Name, "name")
+			suite.Nil(err)
+			suite.Equal(name, request.Name, "name")
 
 			return httpmock.NewStringResponse(200, `{"updateCount":1}`), nil
 		})
 
-	err := New(storeID, token).ProductTypeUpdate(productClassID, &ProductType{Name: name})
-	assert.Truef(t, requested, "request failed")
+	err := suite.client.ProductTypeUpdate(productClassID, &ProductType{Name: name})
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
+	suite.Nil(err)
 }
 
-func TestProductTypeDelete(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *ProductTypeTestSuite) TestProductTypeDelete() {
 	const (
-		storeID        = 666
-		token          = "token"
 		productClassID = 999
 	)
 
@@ -173,15 +153,15 @@ func TestProductTypeDelete(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "DELETE", req.Method, "request method")
+			suite.Equal("DELETE", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
 
 			return httpmock.NewStringResponse(200, `{"deleteCount":1}`), nil
 		})
 
-	err := New(storeID, token).ProductTypeDelete(productClassID)
-	assert.Truef(t, requested, "request failed")
+	err := suite.client.ProductTypeDelete(productClassID)
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
+	suite.Nil(err)
 }

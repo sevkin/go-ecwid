@@ -9,16 +9,19 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestProductImageUpload(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+type ProductImageTestSuite struct {
+	ClientTestSuite
+}
 
+func TestProductImageTestSuite(t *testing.T) {
+	suite.Run(t, new(ProductImageTestSuite))
+}
+
+func (suite *ProductImageTestSuite) TestProductImageUpload() {
 	const (
-		storeID   = 666
-		token     = "token"
 		productID = 999
 		imageFile = "fixture/ecwid.jpg"
 	)
@@ -27,42 +30,37 @@ func TestProductImageUpload(t *testing.T) {
 	requested := false
 
 	file, err := os.Open(imageFile)
-	assert.Nil(t, err)
+	suite.Nil(err)
 	defer file.Close()
 	image, err := ioutil.ReadAll(file)
-	assert.Nil(t, err)
+	suite.Nil(err)
 	file.Seek(0, 0)
 
 	httpmock.RegisterNoResponder(
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "POST", req.Method, "request method")
+			suite.Equal("POST", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
-			assert.Equal(t, "image/jpeg", req.Header["Content-Type"][0], "Content-Type: image/jpeg")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal("image/jpeg", req.Header["Content-Type"][0], "Content-Type: image/jpeg")
 
 			body, err := ioutil.ReadAll(req.Body)
-			assert.Nil(t, err)
-			assert.Equal(t, image, body)
+			suite.Nil(err)
+			suite.Equal(image, body)
 
 			return httpmock.NewStringResponse(200, `{"id":999}`), nil
 		})
 
-	id, err := New(storeID, token).ProductImageUpload(productID, file)
-	assert.Truef(t, requested, "request failed")
+	id, err := suite.client.ProductImageUpload(productID, file)
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
-	assert.Equal(t, uint64(999), id, "id")
+	suite.Nil(err)
+	suite.Equal(uint64(999), id, "id")
 }
 
-func TestProductImageUploadFile(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *ProductImageTestSuite) TestProductImageUploadFile() {
 	const (
-		storeID   = 666
-		token     = "token"
 		productID = 999
 		imageFile = "fixture/ecwid.jpg"
 	)
@@ -71,41 +69,36 @@ func TestProductImageUploadFile(t *testing.T) {
 	requested := false
 
 	file, err := os.Open(imageFile)
-	assert.Nil(t, err)
+	suite.Nil(err)
 	defer file.Close()
 	image, err := ioutil.ReadAll(file)
-	assert.Nil(t, err)
+	suite.Nil(err)
 
 	httpmock.RegisterNoResponder(
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "POST", req.Method, "request method")
+			suite.Equal("POST", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
-			assert.Equal(t, "image/jpeg", req.Header["Content-Type"][0], "Content-Type: image/jpeg")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal("image/jpeg", req.Header["Content-Type"][0], "Content-Type: image/jpeg")
 
 			body, err := ioutil.ReadAll(req.Body)
-			assert.Nil(t, err)
-			assert.Equal(t, image, body)
+			suite.Nil(err)
+			suite.Equal(image, body)
 
 			return httpmock.NewStringResponse(200, `{"id":999}`), nil
 		})
 
-	id, err := New(storeID, token).ProductImageUploadFile(productID, imageFile)
-	assert.Truef(t, requested, "request failed")
+	id, err := suite.client.ProductImageUploadFile(productID, imageFile)
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
-	assert.Equal(t, uint64(999), id, "id")
+	suite.Nil(err)
+	suite.Equal(uint64(999), id, "id")
 }
 
-func TestProductImageUploadFileNotFound(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *ProductImageTestSuite) TestProductImageUploadFileNotFound() {
 	const (
-		storeID   = 666
-		token     = "token"
 		productID = 999
 		imageFile = "fixture/notfound.jpg"
 	)
@@ -119,18 +112,13 @@ func TestProductImageUploadFileNotFound(t *testing.T) {
 			return httpmock.NewStringResponse(400, `{"errorMessage":"ignore me"}`), nil
 		})
 
-	_, err := New(storeID, token).ProductImageUploadFile(productID, imageFile)
-	assert.NotNil(t, err)
-	assert.Falsef(t, requested, "request failed")
+	_, err := suite.client.ProductImageUploadFile(productID, imageFile)
+	suite.NotNil(err)
+	suite.Falsef(requested, "request failed")
 }
 
-func TestProductImageUploadByURL(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *ProductImageTestSuite) TestProductImageUploadByURL() {
 	const (
-		storeID   = 666
-		token     = "token"
 		productID = 999
 		imageURL  = "https://example.org/image.jpg"
 	)
@@ -142,30 +130,25 @@ func TestProductImageUploadByURL(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "POST", req.Method, "request method")
+			suite.Equal("POST", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
 			values := req.URL.Query()
 
-			assert.Equal(t, imageURL, values.Get("externalUrl"), "externalUrl")
+			suite.Equal(imageURL, values.Get("externalUrl"), "externalUrl")
 
 			return httpmock.NewStringResponse(200, `{"id":999}`), nil
 		})
 
-	id, err := New(storeID, token).ProductImageUploadByURL(productID, imageURL)
-	assert.Truef(t, requested, "request failed")
+	id, err := suite.client.ProductImageUploadByURL(productID, imageURL)
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
-	assert.Equal(t, uint64(999), id, "id")
+	suite.Nil(err)
+	suite.Equal(uint64(999), id, "id")
 }
 
-func TestProductImageDelete(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
-
+func (suite *ProductImageTestSuite) TestProductImageDelete() {
 	const (
-		storeID   = 666
-		token     = "token"
 		productID = 999
 	)
 
@@ -176,16 +159,16 @@ func TestProductImageDelete(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			requested = true
 
-			assert.Equal(t, "DELETE", req.Method, "request method")
+			suite.Equal("DELETE", req.Method, "request method")
 			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
-			assert.Equal(t, expectedEndpoint, actualEndpoint, "endpoint")
-			// assert.Equal(t, "application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
+			// suite.Equal("application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
 
 			return httpmock.NewStringResponse(200, `{"deleteCount":1}`), nil
 		})
 
-	err := New(storeID, token).ProductImageDelete(productID)
-	assert.Truef(t, requested, "request failed")
+	err := suite.client.ProductImageDelete(productID)
+	suite.Truef(requested, "request failed")
 
-	assert.Nil(t, err)
+	suite.Nil(err)
 }

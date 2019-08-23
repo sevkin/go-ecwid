@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	httpmock "gopkg.in/jarcoal/httpmock.v1"
 )
 
 func TestRequest(t *testing.T) {

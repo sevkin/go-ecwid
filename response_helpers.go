@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	resty "gopkg.in/resty.v1"
+	"github.com/go-resty/resty/v2"
 )
 
 func errorResponse(response *resty.Response) error {

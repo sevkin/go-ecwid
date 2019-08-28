@@ -86,7 +86,7 @@ type (
 	// OrderItem contains order items
 	OrderItem struct {
 		Name                  string            `json:"name"`
-		Quantity              uint64            `json:"quantity"`
+		Quantity              uint              `json:"quantity"`
 		ProductID             uint64            `json:"productId"`
 		CategoryID            uint64            `json:"categoryId"`
 		Price                 float32           `json:"price"`
@@ -96,7 +96,7 @@ type (
 		ShortDescription      string            `json:"shortDescription"`
 		Tax                   float32           `json:"tax"`
 		Shipping              float32           `json:"shipping"`
-		QuantityInStock       uint64            `json:"quantityInStock"`
+		QuantityInStock       uint              `json:"quantityInStock"`
 		IsShippingRequired    bool              `json:"isShippingRequired"`
 		TrackQuantity         bool              `json:"trackQuantity"`
 		FixedShippingRateOnly bool              `json:"fixedShippingRateOnly"`

@@ -16,7 +16,7 @@ type (
 		UsesLimit        DiscountCouponUseLimit     `json:"usesLimit"`        // Number of uses limitation: UNLIMITED, ONCEPERCUSTOMER, SINGLE
 		ApplicationLimit string                     `json:"applicationLimit"` // Application limit for discount coupons. Possible values: "UNLIMITED", "NEW_CUSTOMER_ONLY", "REPEAT_CUSTOMER_ONLY"
 		CreationDate     string                     `json:"creationDate"`     // Coupon creation date
-		OrderCount       uint64                     `json:"orderCount"`       // Number of uses
+		OrderCount       uint                       `json:"orderCount"`       // Number of uses
 		CatalogLimit     DiscountCouponCatalogLimit `json:"catalogLimit"`     // Products and categories the coupon can be applied to
 	}
 
@@ -118,16 +118,16 @@ type (
 	OrderItemOptionFile struct {
 		ID   uint64 `json:"id"`
 		Name string `json:"name"`
-		Size uint64 `json:"size"`
+		Size uint   `json:"size"`
 		URL  string `json:"url"`
 	}
 
 	// SelectionInfo contains details of selected product options.
 	// If sent in update order request, other fields will be regenerated based on information in this field
 	SelectionInfo struct {
-		SelectionTitle        string                `json:"selectionTitle"`
-		SelectionModifier     float32               `json:"selectionModifier"` // Money or Percent
-		SelectionModifierType SelectionModifierType `json:"selectionModifierType"`
+		SelectionTitle        string       `json:"selectionTitle"`
+		SelectionModifier     float32      `json:"selectionModifier"` // Money or Percent
+		SelectionModifierType ModifierType `json:"selectionModifierType"`
 	}
 
 	// OrderItemTax - taxes applied to this order item
@@ -167,9 +167,6 @@ type (
 
 	// OrderOptionType of OrderItemOption
 	OrderOptionType string
-
-	// SelectionModifierType - price modifier type
-	SelectionModifierType string
 )
 
 // DiscountCouponType types
@@ -238,10 +235,4 @@ const (
 	OptionText    OrderOptionType = "TEXT"    // text input and text area
 	OptionDate    OrderOptionType = "DATE"    // date/time
 	OptionFiles   OrderOptionType = "FILES"   // upload file option
-)
-
-// SelectionModifierType types
-const (
-	SelectionModifierPercent  SelectionModifierType = "PERCENT"
-	SelectionModifierAbsolute SelectionModifierType = "ABSOLUTE"
 )

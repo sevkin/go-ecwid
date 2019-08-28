@@ -19,7 +19,7 @@ type (
 		IsShippingRequired    bool               `json:"isShippingRequired"`
 		Weight                float32            `json:"weight,omitempty"`
 		ProductClassID        uint64             `json:"productClassId"`
-		Created               string             `json:"created,omitempty"`
+		Created               DateTime           `json:"created,omitempty"`
 		Enabled               bool               `json:"enabled"`
 		WarningLimit          uint               `json:"warningLimit"`
 		FixedShippingRateOnly bool               `json:"fixedShippingRateOnly"`
@@ -54,7 +54,7 @@ type (
 		CompareToPriceDiscountPercent          float32            `json:"compareToPriceDiscountPercent"`
 		CompareToPriceDiscountPercentFormatted string             `json:"compareToPriceDiscountPercentFormatted"`
 		URL                                    string             `json:"url"`
-		Updated                                string             `json:"updated"`
+		Updated                                DateTime           `json:"updated"`
 		CreateTimestamp                        uint64             `json:"createTimestamp"`
 		UpdateTimestamp                        uint64             `json:"updateTimestamp"`
 		DefaultCombinationID                   uint64             `json:"defaultCombinationId"`

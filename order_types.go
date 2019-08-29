@@ -22,8 +22,8 @@ type (
 
 	// DiscountCouponCatalogLimit contains products and categories IDs the coupon can be applied to
 	DiscountCouponCatalogLimit struct {
-		ProductIDs  []uint64 `json:"products"`
-		CategoryIDs []uint64 `json:"categories"`
+		ProductIDs  []ID `json:"products"`
+		CategoryIDs []ID `json:"categories"`
 	}
 
 	// PersonInfo contains name and address of the customer
@@ -116,7 +116,7 @@ type (
 
 	// OrderItemOptionFile contains Attached files if OrderOptionType is FILES
 	OrderItemOptionFile struct {
-		ID   uint64 `json:"id"`
+		ID   ID     `json:"id"`
 		Name string `json:"name"`
 		Size uint   `json:"size"`
 		URL  string `json:"url"`

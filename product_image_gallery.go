@@ -8,7 +8,7 @@ import (
 )
 
 // ProductImageGalleryUpload uploads image to product gallery from stream
-func (c *Client) ProductImageGalleryUpload(productID uint64, image io.Reader, imageTitle string) (uint64, error) {
+func (c *Client) ProductImageGalleryUpload(productID ID, image io.Reader, imageTitle string) (ID, error) {
 	params := make(map[string]string)
 	if len(imageTitle) > 0 {
 		params["fileName"] = imageTitle
@@ -24,7 +24,7 @@ func (c *Client) ProductImageGalleryUpload(productID uint64, image io.Reader, im
 }
 
 // ProductImageGalleryUploadFile uploads image to product gallery from local file
-func (c *Client) ProductImageGalleryUploadFile(productID uint64, filename string, imageTitle string) (uint64, error) {
+func (c *Client) ProductImageGalleryUploadFile(productID ID, filename string, imageTitle string) (ID, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return 0, err
@@ -35,7 +35,7 @@ func (c *Client) ProductImageGalleryUploadFile(productID uint64, filename string
 }
 
 // ProductImageGalleryUploadByURL uploads image to product gallery from external url
-func (c *Client) ProductImageGalleryUploadByURL(productID uint64, imageURL, imageTitle string) (uint64, error) {
+func (c *Client) ProductImageGalleryUploadByURL(productID ID, imageURL, imageTitle string) (ID, error) {
 	params := map[string]string{
 		"externalUrl": imageURL,
 	}
@@ -51,7 +51,7 @@ func (c *Client) ProductImageGalleryUploadByURL(productID uint64, imageURL, imag
 }
 
 // ProductImageGalleryDelete deletes image from product gallery by image id
-func (c *Client) ProductImageGalleryDelete(productID, fieldID uint64) error {
+func (c *Client) ProductImageGalleryDelete(productID, fieldID ID) error {
 	response, err := c.R().
 		Delete(fmt.Sprintf("/products/%d/gallery/%d", productID, fieldID))
 
@@ -60,7 +60,7 @@ func (c *Client) ProductImageGalleryDelete(productID, fieldID uint64) error {
 }
 
 // ProductImageGalleryDeleteAll deletes all images from product gallery
-func (c *Client) ProductImageGalleryDeleteAll(productID uint64) (uint, error) {
+func (c *Client) ProductImageGalleryDeleteAll(productID ID) (uint, error) {
 	response, err := c.R().
 		Delete(fmt.Sprintf("/products/%d/gallery", productID))
 

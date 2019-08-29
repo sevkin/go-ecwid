@@ -9,19 +9,19 @@ type (
 	// too bad design for Attribute //
 
 	// for ProductAdd, ProductUpdate
-	// ID    uint64
+	// ID    ID
 	// Alias string
 	// Value string
 
 	// for ProductGet, ProductSearch
-	// ID    uint64
+	// ID    ID
 	// Name  string
 	// Value string
 	// Type  string
 	// Show  string
 
 	// for ProductTypeGet, ProductTypesGet
-	// ID    uint64
+	// ID    ID
 	// Name  string
 	// Type  string
 	// Show  string
@@ -33,7 +33,7 @@ type (
 
 	// Attribute (or AttributeValue in Ecwid) like a key -> value
 	Attribute struct {
-		ID    uint64 `json:"id,omitempty"`    // ID cannot be set to 0 if 'omitempty', but ID is always not 0
+		ID    ID     `json:"id,omitempty"`    // ID cannot be set to 0 if 'omitempty', but ID is always not 0
 		Alias string `json:"alias,omitempty"` // Alias for system attributes like UPC or Brand
 		Name  string `json:"name,omitempty"`
 		Value string `json:"value,omitempty"`
@@ -70,7 +70,7 @@ func (av *Attributes) GetByName(name string) *Attribute {
 }
 
 // GetByID is same as Get, just by ID not by Name
-func (av *Attributes) GetByID(id uint64) *Attribute {
+func (av *Attributes) GetByID(id ID) *Attribute {
 	for i, r := range av.attributes {
 		if r.ID == id { // FIXME if same id return 1st
 			return &av.attributes[i]

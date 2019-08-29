@@ -38,5 +38,5 @@ func (suite *StoreInformationTestSuite) TestStoreProfileGet() {
 	suite.Truef(requested, "request failed")
 
 	suite.Nil(err)
-	suite.Equal(uint64(storeID), p.GeneralInfo.StoreID, "id")
+	suite.Equal(storeID, p.GeneralInfo.StoreID, "id")
 }

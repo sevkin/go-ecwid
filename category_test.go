@@ -116,7 +116,7 @@ func (suite *CategoryTestSuite) TestCategories() {
 
 func (suite *CategoryTestSuite) TestCategoryGet() {
 	const (
-		categoryID = 999
+		categoryID ID = 999
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/categories/%d", storeID, categoryID)
@@ -137,13 +137,14 @@ func (suite *CategoryTestSuite) TestCategoryGet() {
 	suite.Truef(requested, "request failed")
 
 	suite.Nil(err)
-	suite.Equal(uint64(categoryID), c.ID, "id")
+	suite.Equal(categoryID, c.ID, "id")
 	suite.Equal("name", c.Name, "name")
 }
 
 func (suite *CategoryTestSuite) TestCategoryAdd() {
 	const (
-		name = "new cat"
+		categoryID ID = 999
+		name          = "new cat"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/categories", storeID)
@@ -165,20 +166,20 @@ func (suite *CategoryTestSuite) TestCategoryAdd() {
 			suite.Nil(err)
 			suite.Equal(name, c.Name, "name")
 
-			return httpmock.NewStringResponse(200, `{"id":999}`), nil
+			return httpmock.NewStringResponse(200, fmt.Sprintf(`{"id":%d}`, categoryID)), nil
 		})
 
 	id, err := suite.client.CategoryAdd(&NewCategory{Name: name})
 	suite.Truef(requested, "request failed")
 
 	suite.Nil(err)
-	suite.Equal(uint64(999), id, "id")
+	suite.Equal(categoryID, id, "id")
 }
 
 func (suite *CategoryTestSuite) TestCategoryUpdate() {
 	const (
-		categoryID = 999
-		name       = "upd cat"
+		categoryID ID = 999
+		name          = "upd cat"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/categories/%d", storeID, categoryID)
@@ -211,7 +212,7 @@ func (suite *CategoryTestSuite) TestCategoryUpdate() {
 
 func (suite *CategoryTestSuite) TestCategoryDelete() {
 	const (
-		categoryID = 999
+		categoryID ID = 999
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/categories/%d", storeID, categoryID)

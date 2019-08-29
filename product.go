@@ -18,7 +18,7 @@ type (
 		CompareToPrice        float32            `json:"compareToPrice,omitempty"`
 		IsShippingRequired    bool               `json:"isShippingRequired"`
 		Weight                float32            `json:"weight,omitempty"`
-		ProductClassID        uint64             `json:"productClassId"`
+		ProductClassID        ID                 `json:"productClassId"`
 		Created               DateTime           `json:"created,omitempty"`
 		Enabled               bool               `json:"enabled"`
 		WarningLimit          uint               `json:"warningLimit"`
@@ -27,9 +27,9 @@ type (
 		Description           template.HTML      `json:"description,omitempty"`
 		SeoTitle              string             `json:"seoTitle,omitempty"`
 		SeoDescription        string             `json:"seoDescription,omitempty"`
-		DefaultCategoryID     uint64             `json:"defaultCategoryId"`
+		DefaultCategoryID     ID                 `json:"defaultCategoryId"`
 		ShowOnFrontpage       int                `json:"showOnFrontpage,omitempty"`
-		CategoryIDs           []uint64           `json:"categoryIds,omitempty"`
+		CategoryIDs           []ID               `json:"categoryIds,omitempty"`
 		WholesalePrices       []WholesalePrice   `json:"wholesalePrices,omitempty"`
 		Options               []ProductOption    `json:"options,omitempty"`
 		Attributes            Attributes         `json:"attributes,omitempty"`
@@ -44,7 +44,7 @@ type (
 	// Product https://developers.ecwid.com/api-documentation/products#get-a-product
 	Product struct {
 		NewProduct
-		ID                                     uint64             `json:"id"`
+		ID                                     ID                 `json:"id"`
 		InStock                                bool               `json:"inStock"`
 		DefaultDisplayedPrice                  float32            `json:"defaultDisplayedPrice"`
 		DefaultDisplayedPriceFormatted         string             `json:"defaultDisplayedPriceFormatted"`
@@ -57,7 +57,7 @@ type (
 		Updated                                DateTime           `json:"updated"`
 		CreateTimestamp                        uint64             `json:"createTimestamp"`
 		UpdateTimestamp                        uint64             `json:"updateTimestamp"`
-		DefaultCombinationID                   uint64             `json:"defaultCombinationId"`
+		DefaultCombinationID                   ID                 `json:"defaultCombinationId"`
 		IsSampleProduct                        bool               `json:"isSampleProduct"`
 		Combinations                           []ProductVariation `json:"combinations"`
 		Categories                             []CategoriesInfo   `json:"categories"`
@@ -144,7 +144,7 @@ func (c *Client) ProductsTrampoline(filter map[string]string, fn func(int, *Prod
 }
 
 // ProductGet gets all details of a specific product in an Ecwid store by its ID
-func (c *Client) ProductGet(productID uint64) (*Product, error) {
+func (c *Client) ProductGet(productID ID) (*Product, error) {
 	response, err := c.R().
 		Get(fmt.Sprintf("/products/%d", productID))
 
@@ -154,7 +154,7 @@ func (c *Client) ProductGet(productID uint64) (*Product, error) {
 
 // ProductAdd creates a new product in an Ecwid store
 // returns new productId
-func (c *Client) ProductAdd(product *NewProduct) (uint64, error) {
+func (c *Client) ProductAdd(product *NewProduct) (ID, error) {
 	response, err := c.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(product).
@@ -164,7 +164,7 @@ func (c *Client) ProductAdd(product *NewProduct) (uint64, error) {
 }
 
 // ProductUpdate update an existing product in an Ecwid store referring to its ID
-func (c *Client) ProductUpdate(productID uint64, product *NewProduct) error {
+func (c *Client) ProductUpdate(productID ID, product *NewProduct) error {
 	response, err := c.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(product).
@@ -177,7 +177,7 @@ func (c *Client) ProductUpdate(productID uint64, product *NewProduct) error {
 // func (c *Client) UpdateProductJson(productID uint, productJson string) error {
 
 // ProductDelete delete a product from an Ecwid store referring to its ID
-func (c *Client) ProductDelete(productID uint64) error {
+func (c *Client) ProductDelete(productID ID) error {
 	response, err := c.R().
 		Delete(fmt.Sprintf("/products/%d", productID))
 
@@ -186,7 +186,7 @@ func (c *Client) ProductDelete(productID uint64) error {
 }
 
 // ProductInventoryAdjust increase or decrease the product’s stock quantity by a delta quantity
-func (c *Client) ProductInventoryAdjust(productID uint, quantityDelta int) (int, error) {
+func (c *Client) ProductInventoryAdjust(productID ID, quantityDelta int) (int, error) {
 	response, err := c.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(fmt.Sprintf(`{"quantityDelta":%d}`, quantityDelta)).

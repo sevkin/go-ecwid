@@ -26,7 +26,7 @@ type (
 		RefererURL                      string             `json:"refererUrl"`
 		OrderComments                   string             `json:"orderComments"`
 		VolumeDiscount                  float32            `json:"volumeDiscount"`
-		CustomerID                      uint64             `json:"customerId"`
+		CustomerID                      ID                 `json:"customerId"`
 		Hidden                          bool               `json:"hidden"`
 		MembershipBasedDiscount         float32            `json:"membershipBasedDiscount"`
 		TotalAndMembershipBasedDiscount float32            `json:"totalAndMembershipBasedDiscount"`
@@ -59,13 +59,13 @@ type (
 	// Order https://developers.ecwid.com/api-documentation/orders#get-order-details
 	Order struct {
 		NewOrder
-		OrderNumber       uint64           `json:"orderNumber"`
+		OrderID           ID               `json:"orderNumber"`
 		VendorOrderNumber string           `json:"vendorOrderNumber"`
 		USDTotal          float32          `json:"usdTotal"`
 		UpdateDate        DateTime         `json:"updateDate"`
 		CreateTimestamp   uint64           `json:"createTimestamp"`
 		UpdateTimestamp   uint64           `json:"updateTimestamp"`
-		CustomerGroupID   uint64           `json:"customerGroupId"`
+		CustomerGroupID   ID               `json:"customerGroupId"`
 		PredictedPackages PredictedPackage `json:"predictedPackages"`
 		ExtraFields       ExtraFieldsInfo  `json:"extraFields,omitempty"`
 		RefundedAmount    float32          `json:"refundedAmount"`
@@ -87,8 +87,8 @@ type (
 	OrderItem struct {
 		Name                  string            `json:"name"`
 		Quantity              uint              `json:"quantity"`
-		ProductID             uint64            `json:"productId"`
-		CategoryID            uint64            `json:"categoryId"`
+		ProductID             ID                `json:"productId"`
+		CategoryID            ID                `json:"categoryId"`
 		Price                 float32           `json:"price"`
 		ProductPrice          float32           `json:"productPrice"`
 		Weight                float32           `json:"weight"`
@@ -112,7 +112,7 @@ type (
 // OrdersSearch search or filter orders in a store
 // filter:
 // keywords totalFrom totalTo createdFrom createdTo updatedFrom updatedTo
-// couponCode orderuint64 vendorOrderuint64
+// couponCode orderId vendorOrderId
 // email customerId paymentMethod shippingMethod paymentStatus fulfillmentStatus
 // acceptMarketing refererId productId offset limit
 func (c *Client) OrdersSearch(filter map[string]string) (*OrdersSearchResponse, error) {
@@ -172,7 +172,7 @@ func (c *Client) OrdersTrampoline(filter map[string]string, fn func(int, *Order)
 }
 
 // OrderGet gets all details of a specific order in an Ecwid store by its ID
-func (c *Client) OrderGet(orderID uint64) (*Order, error) {
+func (c *Client) OrderGet(orderID ID) (*Order, error) {
 	response, err := c.R().
 		Get(fmt.Sprintf("/orders/%d", orderID))
 

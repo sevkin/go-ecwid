@@ -11,17 +11,17 @@ type (
 	// NewCategory https://developers.ecwid.com/api-documentation/categories#add-new-category
 	NewCategory struct {
 		Name        string        `json:"name,omitempty"`
-		ParentID    uint64        `json:"parentId"`
+		ParentID    ID            `json:"parentId"`
 		OrderBy     int           `json:"orderBy"`
 		Description template.HTML `json:"description,omitempty"`
 		Enabled     bool          `json:"enabled"`
-		ProductIDs  []uint64      `json:"productIds,omitempty"`
+		ProductIDs  []ID          `json:"productIds,omitempty"`
 	}
 
 	// Category https://developers.ecwid.com/api-documentation/categories#get-categories
 	Category struct {
 		NewCategory
-		ID                  uint64        `json:"id"`
+		ID                  ID            `json:"id"`
 		HdThumbnailURL      string        `json:"hdThumbnailUrl"`
 		ThumbnailURL        string        `json:"thumbnailUrl"`
 		ImageURL            string        `json:"imageUrl"`
@@ -105,7 +105,7 @@ func (c *Client) CategoriesTrampoline(filter map[string]string, fn func(int, *Ca
 }
 
 // CategoryGet gets all details of a specific category in an Ecwid store by its ID
-func (c *Client) CategoryGet(categoryID uint64) (*Category, error) {
+func (c *Client) CategoryGet(categoryID ID) (*Category, error) {
 	response, err := c.R().
 		Get(fmt.Sprintf("/categories/%d", categoryID))
 
@@ -115,7 +115,7 @@ func (c *Client) CategoryGet(categoryID uint64) (*Category, error) {
 
 // CategoryAdd creates a new category in an Ecwid store
 // returns new categoryId
-func (c *Client) CategoryAdd(category *NewCategory) (uint64, error) {
+func (c *Client) CategoryAdd(category *NewCategory) (ID, error) {
 	response, err := c.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(category).
@@ -125,7 +125,7 @@ func (c *Client) CategoryAdd(category *NewCategory) (uint64, error) {
 }
 
 // CategoryUpdate update an existing category in an Ecwid store referring to its ID
-func (c *Client) CategoryUpdate(categoryID uint64, category *NewCategory) error {
+func (c *Client) CategoryUpdate(categoryID ID, category *NewCategory) error {
 	response, err := c.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(category).
@@ -135,7 +135,7 @@ func (c *Client) CategoryUpdate(categoryID uint64, category *NewCategory) error 
 }
 
 // CategoryDelete delete a category from an Ecwid store referring to its ID
-func (c *Client) CategoryDelete(categoryID uint64) error {
+func (c *Client) CategoryDelete(categoryID ID) error {
 	response, err := c.R().
 		Delete(fmt.Sprintf("/categories/%d", categoryID))
 

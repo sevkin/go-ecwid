@@ -6,8 +6,8 @@ import (
 )
 
 const ( // consts used in all _test.go files
-	storeID = 666
-	token   = "token"
+	storeID ID = 666
+	token      = "token"
 )
 
 type ClientTestSuite struct {

@@ -26,7 +26,7 @@ type (
 
 	// GeneralInfo - store basic data
 	GeneralInfo struct {
-		StoreID     uint64          `json:"storeId"`
+		StoreID     ID              `json:"storeId"`
 		StoreURL    string          `json:"storeUrl"`
 		StarterSite InstantSiteInfo `json:"starterSite"`
 	}

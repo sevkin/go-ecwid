@@ -7,7 +7,7 @@ import "fmt"
 type (
 	// ProductType https://developers.ecwid.com/api-documentation/product-types#get-product-type
 	ProductType struct {
-		ID         uint64     `json:"id,omitempty"` // mandatory for update
+		ID         ID         `json:"id,omitempty"` // mandatory for update
 		Name       string     `json:"name,omitempty"`
 		Attributes Attributes `json:"attributes,omitempty"`
 	}
@@ -26,7 +26,7 @@ func (c *Client) ProductTypesGet() (*ProductTypesResponse, error) {
 }
 
 // ProductTypeGet gets the full details of a specific product type referring to its ID
-func (c *Client) ProductTypeGet(productClassID uint64) (*ProductType, error) {
+func (c *Client) ProductTypeGet(productClassID ID) (*ProductType, error) {
 	response, err := c.R().
 		Get(fmt.Sprintf("/classes/%d", productClassID))
 
@@ -36,7 +36,7 @@ func (c *Client) ProductTypeGet(productClassID uint64) (*ProductType, error) {
 
 // ProductTypeAdd creates a new product type in an Ecwid store
 // returns new productClassID
-func (c *Client) ProductTypeAdd(ProductType *ProductType) (uint64, error) {
+func (c *Client) ProductTypeAdd(ProductType *ProductType) (ID, error) {
 	response, err := c.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(ProductType).
@@ -50,7 +50,7 @@ func (c *Client) ProductTypeAdd(ProductType *ProductType) (uint64, error) {
 // If you want to add new product attributes to existing product type,
 // send your new attributes AND all existing attributes for that product type.
 // Otherwise you will reset the existing attributes in that product type.
-func (c *Client) ProductTypeUpdate(productClassID uint64, ProductType *ProductType) error {
+func (c *Client) ProductTypeUpdate(productClassID ID, ProductType *ProductType) error {
 	response, err := c.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(ProductType).
@@ -62,7 +62,7 @@ func (c *Client) ProductTypeUpdate(productClassID uint64, ProductType *ProductTy
 // ProductTypeDelete deletes a specific product type and its assigned attributes.
 // The products that belong to this type will not be removed.
 // They will be re-assigned to the General type.
-func (c *Client) ProductTypeDelete(productClassID uint64) error {
+func (c *Client) ProductTypeDelete(productClassID ID) error {
 	response, err := c.R().
 		Delete(fmt.Sprintf("/classes/%d", productClassID))
 

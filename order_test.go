@@ -100,7 +100,7 @@ func (suite *OrderTestSuite) TestOrders() {
 
 func (suite *OrderTestSuite) TestOrderGet() {
 	const (
-		orderID = 999
+		orderID ID = 999
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/orders/%d", storeID, orderID)
@@ -123,7 +123,7 @@ func (suite *OrderTestSuite) TestOrderGet() {
 	suite.Truef(requested, "request failed")
 
 	suite.Nil(err)
-	suite.Equal(uint64(orderID), o.OrderNumber, "id")
+	suite.Equal(orderID, o.OrderID, "id")
 	suite.Equal("s@k.y", o.Email, "email")
 	suite.Equal(1, len(o.Items), "items")
 	suite.Equal("test", o.Items[0].Name, "item name")

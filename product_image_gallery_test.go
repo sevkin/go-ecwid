@@ -22,9 +22,9 @@ func TestProductImageGalleryTestSuite(t *testing.T) {
 
 func (suite *ProductImageGalleryTestSuite) TestProductImageGalleryUpload() {
 	const (
-		productID  = 999
-		imageFile  = "fixture/ecwid.jpg"
-		imageTitle = "test gallery upload"
+		productID  ID = 999
+		imageFile     = "fixture/ecwid.jpg"
+		imageTitle    = "test gallery upload"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/products/%d/gallery", storeID, productID)
@@ -53,20 +53,20 @@ func (suite *ProductImageGalleryTestSuite) TestProductImageGalleryUpload() {
 			suite.Nil(err)
 			suite.Equal(image, body)
 
-			return httpmock.NewStringResponse(200, `{"id":999}`), nil
+			return httpmock.NewStringResponse(200, fmt.Sprintf(`{"id":%d}`, productID)), nil
 		})
 
 	id, err := suite.client.ProductImageGalleryUpload(productID, file, imageTitle)
 	suite.Truef(requested, "request failed")
 
 	suite.Nil(err)
-	suite.Equal(uint64(999), id, "id")
+	suite.Equal(productID, id, "id")
 }
 
 func (suite *ProductImageGalleryTestSuite) TestProductImageGalleryUploadFile() {
 	const (
-		productID = 999
-		imageFile = "fixture/ecwid.jpg"
+		productID ID = 999
+		imageFile    = "fixture/ecwid.jpg"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/products/%d/gallery", storeID, productID)
@@ -95,20 +95,20 @@ func (suite *ProductImageGalleryTestSuite) TestProductImageGalleryUploadFile() {
 			suite.Nil(err)
 			suite.Equal(image, body)
 
-			return httpmock.NewStringResponse(200, `{"id":999}`), nil
+			return httpmock.NewStringResponse(200, fmt.Sprintf(`{"id":%d}`, productID)), nil
 		})
 
 	id, err := suite.client.ProductImageGalleryUploadFile(productID, imageFile, "")
 	suite.Truef(requested, "request failed")
 
 	suite.Nil(err)
-	suite.Equal(uint64(999), id, "id")
+	suite.Equal(productID, id, "id")
 }
 
 func (suite *ProductImageGalleryTestSuite) TestProductImageGalleryUploadFileNotFound() {
 	const (
-		productID = 999
-		imageFile = "fixture/notfound.jpg"
+		productID ID = 999
+		imageFile    = "fixture/notfound.jpg"
 	)
 
 	requested := false
@@ -127,8 +127,8 @@ func (suite *ProductImageGalleryTestSuite) TestProductImageGalleryUploadFileNotF
 
 func (suite *ProductImageGalleryTestSuite) TestProductImageGalleryUploadByURL() {
 	const (
-		productID = 999
-		imageURL  = "https://example.org/image.jpg"
+		productID ID = 999
+		imageURL     = "https://example.org/image.jpg"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/products/%d/gallery", storeID, productID)
@@ -145,20 +145,20 @@ func (suite *ProductImageGalleryTestSuite) TestProductImageGalleryUploadByURL() 
 
 			suite.Equal(imageURL, values.Get("externalUrl"), "externalUrl")
 
-			return httpmock.NewStringResponse(200, `{"id":999}`), nil
+			return httpmock.NewStringResponse(200, fmt.Sprintf(`{"id":%d}`, productID)), nil
 		})
 
 	id, err := suite.client.ProductImageGalleryUploadByURL(productID, imageURL, "")
 	suite.Truef(requested, "request failed")
 
 	suite.Nil(err)
-	suite.Equal(uint64(999), id, "id")
+	suite.Equal(productID, id, "id")
 }
 
 func (suite *ProductImageGalleryTestSuite) TestProductImageGalleryDelete() {
 	const (
-		productID = 999
-		fieldID   = 555
+		productID ID = 999
+		fieldID   ID = 555
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/products/%d/gallery/%d", storeID, productID, fieldID)
@@ -184,7 +184,7 @@ func (suite *ProductImageGalleryTestSuite) TestProductImageGalleryDelete() {
 
 func (suite *ProductImageGalleryTestSuite) TestProductImageGalleryDeleteAll() {
 	const (
-		productID = 999
+		productID ID = 999
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/products/%d/gallery", storeID, productID)

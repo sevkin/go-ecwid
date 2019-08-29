@@ -43,14 +43,14 @@ type (
 
 	// RelatedCategory describes the “N random related products from a category” option
 	RelatedCategory struct {
-		Enabled      bool   `json:"enabled"`
-		CategoryID   uint64 `json:"categoryId"`
-		ProductCount uint   `json:"productCount"`
+		Enabled      bool `json:"enabled"`
+		CategoryID   ID   `json:"categoryId"`
+		ProductCount uint `json:"productCount"`
 	}
 
 	// RelatedProducts related or “You may also like” products of the product
 	RelatedProducts struct {
-		ProductIDs      []uint64        `json:"productIds,omitempty"`
+		ProductIDs      []ID            `json:"productIds,omitempty"`
 		RelatedCategory RelatedCategory `json:"relatedCategory"`
 	}
 
@@ -63,8 +63,8 @@ type (
 
 	// TaxInfo contains detailed information about product’s taxes
 	TaxInfo struct {
-		DefaultLocationIncludedTaxRate uint     `json:"defaultLocationIncludedTaxRate"` // ???
-		EnabledManualTaxes             []uint64 `json:"enabledManualTaxes,omitempty"`
+		DefaultLocationIncludedTaxRate uint `json:"defaultLocationIncludedTaxRate"` // ???
+		EnabledManualTaxes             []ID `json:"enabledManualTaxes,omitempty"`
 	}
 
 	// ProductImage contains images of product and their details
@@ -90,8 +90,8 @@ type (
 
 	// CategoriesInfo ...
 	CategoriesInfo struct {
-		ID      uint64 `json:"id"`
-		Enabled bool   `json:"enabled"`
+		ID      ID   `json:"id"`
+		Enabled bool `json:"enabled"`
 	}
 
 	// ProductFile struct {
@@ -99,7 +99,7 @@ type (
 
 	// ProductVariation ...
 	ProductVariation struct {
-		ID                uint64  `json:"id"`
+		ID                ID      `json:"id"`
 		CombinationNumber uint    `json:"combinationNumber"`
 		Sku               string  `json:"sku,omitempty"`
 		ThumbnailURL      string  `json:"thumbnailUrl,omitempty"`

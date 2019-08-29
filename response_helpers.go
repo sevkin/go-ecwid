@@ -36,9 +36,9 @@ func responseUnmarshal(response *resty.Response, err error, result interface{}) 
 	return nil
 }
 
-func responseAdd(response *resty.Response, err error) (uint64, error) {
+func responseAdd(response *resty.Response, err error) (ID, error) {
 	var result struct {
-		ID uint64 `json:"id"`
+		ID ID `json:"id"`
 	}
 
 	if err := responseUnmarshal(response, err, &result); err != nil {

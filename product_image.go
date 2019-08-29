@@ -8,7 +8,7 @@ import (
 )
 
 // ProductImageUpload uploads product image from stream
-func (c *Client) ProductImageUpload(productID uint64, image io.Reader) (uint64, error) {
+func (c *Client) ProductImageUpload(productID ID, image io.Reader) (ID, error) {
 	response, err := c.R().
 		SetHeader("Content-Type", "image/jpeg").
 		SetBody(image).
@@ -18,7 +18,7 @@ func (c *Client) ProductImageUpload(productID uint64, image io.Reader) (uint64, 
 }
 
 // ProductImageUploadFile uploads product image from local image file
-func (c *Client) ProductImageUploadFile(productID uint64, filename string) (uint64, error) {
+func (c *Client) ProductImageUploadFile(productID ID, filename string) (ID, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return 0, err
@@ -29,7 +29,7 @@ func (c *Client) ProductImageUploadFile(productID uint64, filename string) (uint
 }
 
 // ProductImageUploadByURL uploads product image  from external resource
-func (c *Client) ProductImageUploadByURL(productID uint64, imageURL string) (uint64, error) {
+func (c *Client) ProductImageUploadByURL(productID ID, imageURL string) (ID, error) {
 	response, err := c.R().
 		SetQueryParam("externalUrl", imageURL).
 		Post(fmt.Sprintf("/products/%d/image", productID))
@@ -38,7 +38,7 @@ func (c *Client) ProductImageUploadByURL(productID uint64, imageURL string) (uin
 }
 
 // ProductImageDelete deletes the main image of a product in an Ecwid store
-func (c *Client) ProductImageDelete(productID uint64) error {
+func (c *Client) ProductImageDelete(productID ID) error {
 	response, err := c.R().
 		Delete(fmt.Sprintf("/products/%d/image", productID))
 

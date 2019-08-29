@@ -48,7 +48,7 @@ func (suite *ProductTypeTestSuite) TestProductTypesGet() {
 
 func (suite *ProductTypeTestSuite) TestProductTypeGet() {
 	const (
-		productClassID = 999
+		productClassID ID = 999
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/classes/%d", storeID, productClassID)
@@ -69,13 +69,14 @@ func (suite *ProductTypeTestSuite) TestProductTypeGet() {
 	suite.Truef(requested, "request failed")
 
 	suite.Nil(err)
-	suite.Equal(uint64(productClassID), result.ID, "id")
+	suite.Equal(productClassID, result.ID, "id")
 	suite.Equal("name", result.Name, "name")
 }
 
 func (suite *ProductTypeTestSuite) TestProductTypeAdd() {
 	const (
-		name = "new cls"
+		productClassID ID = 999
+		name              = "new cls"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/classes", storeID)
@@ -97,20 +98,20 @@ func (suite *ProductTypeTestSuite) TestProductTypeAdd() {
 			suite.Nil(err)
 			suite.Equal(name, request.Name, "name")
 
-			return httpmock.NewStringResponse(200, `{"id":999}`), nil
+			return httpmock.NewStringResponse(200, fmt.Sprintf(`{"id":%d}`, productClassID)), nil
 		})
 
 	id, err := suite.client.ProductTypeAdd(&ProductType{Name: name})
 	suite.Truef(requested, "request failed")
 
 	suite.Nil(err)
-	suite.Equal(uint64(999), id, "id")
+	suite.Equal(productClassID, id, "id")
 }
 
 func (suite *ProductTypeTestSuite) TestProductTypeUpdate() {
 	const (
-		productClassID = 999
-		name           = "upd cat"
+		productClassID ID = 999
+		name              = "upd cat"
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/classes/%d", storeID, productClassID)
@@ -143,7 +144,7 @@ func (suite *ProductTypeTestSuite) TestProductTypeUpdate() {
 
 func (suite *ProductTypeTestSuite) TestProductTypeDelete() {
 	const (
-		productClassID = 999
+		productClassID ID = 999
 	)
 
 	expectedEndpoint := fmt.Sprintf(endpoint+"/classes/%d", storeID, productClassID)

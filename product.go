@@ -67,10 +67,7 @@ type (
 
 	// ProductsSearchResponse https://developers.ecwid.com/api-documentation/products#search-products
 	ProductsSearchResponse struct {
-		Total    uint       `json:"total"`
-		Count    uint       `json:"count"`
-		Offset   uint       `json:"offset"`
-		Limit    uint       `json:"limit"`
+		SearchResponse
 		Products []*Product `json:"items"`
 	}
 )

@@ -76,10 +76,7 @@ type (
 
 	// OrdersSearchResponse https://developers.ecwid.com/api-documentation/orders#search-orders
 	OrdersSearchResponse struct {
-		Total  uint     `json:"total"`
-		Count  uint     `json:"count"`
-		Offset uint     `json:"offset"`
-		Limit  uint     `json:"limit"`
+		SearchResponse
 		Orders []*Order `json:"items"`
 	}
 

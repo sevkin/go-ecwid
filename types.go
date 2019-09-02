@@ -3,6 +3,15 @@ package ecwid
 import "encoding/json"
 
 type (
+
+	// SearchResponse - common parts of all search funcs
+	SearchResponse struct {
+		Total  uint `json:"total"`
+		Count  uint `json:"count"`
+		Offset uint `json:"offset"`
+		Limit  uint `json:"limit"`
+	}
+
 	// Custom fields
 
 	// ID object identifier.

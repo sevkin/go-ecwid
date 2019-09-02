@@ -65,10 +65,12 @@ func (suite *OrderTestSuite) TestOrders() {
 				suite.Equal(uint64(1), limit)
 
 				return httpmock.NewJsonResponse(200, OrdersSearchResponse{
-					Total:  3,
-					Count:  1,
-					Offset: uint(offset),
-					Limit:  uint(limit),
+					SearchResponse: SearchResponse{
+						Total:  3,
+						Count:  1,
+						Offset: uint(offset),
+						Limit:  uint(limit),
+					},
 					Orders: []*Order{
 						&Order{
 							NewOrder: NewOrder{

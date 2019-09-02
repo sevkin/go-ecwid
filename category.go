@@ -34,11 +34,8 @@ type (
 
 	// CategoriesGetResponse is basic details of found categories
 	CategoriesGetResponse struct {
-		Total  uint        `json:"total"`
-		Count  uint        `json:"count"`
-		Offset uint        `json:"offset"`
-		Limit  uint        `json:"limit"`
-		Items  []*Category `json:"items"`
+		SearchResponse
+		Items []*Category `json:"items"`
 	}
 )
 

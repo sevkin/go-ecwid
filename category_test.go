@@ -78,10 +78,12 @@ func (suite *CategoryTestSuite) TestCategories() {
 				suite.Equal(uint64(1), limit)
 
 				return httpmock.NewJsonResponse(200, CategoriesGetResponse{
-					Total:  3,
-					Count:  1,
-					Offset: uint(offset),
-					Limit:  uint(limit),
+					SearchResponse: SearchResponse{
+						Total:  3,
+						Count:  1,
+						Offset: uint(offset),
+						Limit:  uint(limit),
+					},
 					Items: []*Category{
 						&Category{
 							NewCategory: NewCategory{

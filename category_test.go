@@ -45,7 +45,7 @@ func (suite *CategoryTestSuite) TestCategoriesGet() {
 			return httpmock.NewStringResponse(200, `{"total":2,"count":2,"offset":0,"limit":100,"items":[{"id": 1, "name": "one"},{"id": 2, "url": "`+url+`"}]}`), nil
 		})
 
-	result, err := suite.client.CategoriesGet(map[string]string{
+	result, err := suite.client.CategoriesSearch(map[string]string{
 		"parent": "0",
 		"limit":  "5",
 	})
@@ -77,7 +77,7 @@ func (suite *CategoryTestSuite) TestCategories() {
 				suite.Equal(uint64(requestCount), offset)
 				suite.Equal(uint64(1), limit)
 
-				return httpmock.NewJsonResponse(200, CategoriesGetResponse{
+				return httpmock.NewJsonResponse(200, CategoriesSearchResponse{
 					SearchResponse: SearchResponse{
 						Total:  3,
 						Count:  1,

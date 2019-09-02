@@ -32,16 +32,16 @@ type (
 		OriginalImage       *ImageDetails `json:"originalImage"`
 	}
 
-	// CategoriesGetResponse is basic details of found categories
-	CategoriesGetResponse struct {
+	// CategoriesSearchResponse is basic details of found categories
+	CategoriesSearchResponse struct {
 		SearchResponse
 		Items []*Category `json:"items"`
 	}
 )
 
-// CategoriesGet search or filter categories in a store catalog
+// CategoriesSearch search or filter categories in a store catalog
 // The response provides basic details of found categories
-func (c *Client) CategoriesGet(filter map[string]string) (*CategoriesGetResponse, error) {
+func (c *Client) CategoriesSearch(filter map[string]string) (*CategoriesSearchResponse, error) {
 	// filter:
 	// parent number, hidden_categories bool, offset number, limit number,
 	// productIds array?, baseUrl string, cleanUrls bool
@@ -50,7 +50,7 @@ func (c *Client) CategoriesGet(filter map[string]string) (*CategoriesGetResponse
 		SetQueryParams(filter).
 		Get("/categories")
 
-	var result CategoriesGetResponse
+	var result CategoriesSearchResponse
 	return &result, responseUnmarshal(response, err, &result)
 }
 
@@ -83,7 +83,7 @@ func (c *Client) CategoriesTrampoline(filter map[string]string, fn func(int, *Ca
 	}
 
 	for {
-		resp, err := c.CategoriesGet(filterCopy)
+		resp, err := c.CategoriesSearch(filterCopy)
 		if err != nil {
 			return err
 		}

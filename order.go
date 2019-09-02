@@ -77,7 +77,7 @@ type (
 	// OrdersSearchResponse https://developers.ecwid.com/api-documentation/orders#search-orders
 	OrdersSearchResponse struct {
 		SearchResponse
-		Orders []*Order `json:"items"`
+		Items []*Order `json:"items"`
 	}
 
 	// OrderItem contains order items
@@ -128,7 +128,7 @@ func (c *Client) Orders(ctx context.Context, filter map[string]string) <-chan *O
 	go func() {
 		defer close(orderChan)
 
-		c.OrdersTrampoline(filter, func(index int, order *Order) error {
+		c.OrdersTrampoline(filter, func(index uint, order *Order) error {
 			// FIXME silent error. maybe orderChan <- nil ?
 			select {
 			case <-ctx.Done():
@@ -140,32 +140,6 @@ func (c *Client) Orders(ctx context.Context, filter map[string]string) <-chan *O
 	}()
 
 	return orderChan
-}
-
-// OrdersTrampoline call on each orders
-func (c *Client) OrdersTrampoline(filter map[string]string, fn func(int, *Order) error) error {
-	filterCopy := make(map[string]string)
-	for k, v := range filter {
-		filterCopy[k] = v
-	}
-
-	for {
-		resp, err := c.OrdersSearch(filterCopy)
-		if err != nil {
-			return err
-		}
-
-		for index, order := range resp.Orders {
-			if err := fn(index, order); err != nil {
-				return err
-			}
-		}
-
-		if resp.Offset+resp.Count >= resp.Total {
-			return nil
-		}
-		filterCopy["offset"] = fmt.Sprintf("%d", resp.Offset+resp.Count)
-	}
 }
 
 // OrderGet gets all details of a specific order in an Ecwid store by its ID

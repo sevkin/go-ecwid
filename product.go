@@ -68,7 +68,7 @@ type (
 	// ProductsSearchResponse https://developers.ecwid.com/api-documentation/products#search-products
 	ProductsSearchResponse struct {
 		SearchResponse
-		Products []*Product `json:"items"`
+		Items []*Product `json:"items"`
 	}
 )
 
@@ -100,7 +100,7 @@ func (c *Client) Products(ctx context.Context, filter map[string]string) <-chan 
 	go func() {
 		defer close(prodChan)
 
-		c.ProductsTrampoline(filter, func(index int, product *Product) error {
+		c.ProductsTrampoline(filter, func(index uint, product *Product) error {
 			// FIXME silent error. maybe prodChan <- nil ?
 			select {
 			case <-ctx.Done():
@@ -112,32 +112,6 @@ func (c *Client) Products(ctx context.Context, filter map[string]string) <-chan 
 	}()
 
 	return prodChan
-}
-
-// ProductsTrampoline call on each products
-func (c *Client) ProductsTrampoline(filter map[string]string, fn func(int, *Product) error) error {
-	filterCopy := make(map[string]string)
-	for k, v := range filter {
-		filterCopy[k] = v
-	}
-
-	for {
-		resp, err := c.ProductsSearch(filterCopy)
-		if err != nil {
-			return err
-		}
-
-		for index, product := range resp.Products {
-			if err := fn(index, product); err != nil {
-				return err
-			}
-		}
-
-		if resp.Offset+resp.Count >= resp.Total {
-			return nil
-		}
-		filterCopy["offset"] = fmt.Sprintf("%d", resp.Offset+resp.Count)
-	}
 }
 
 // ProductGet gets all details of a specific product in an Ecwid store by its ID

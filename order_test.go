@@ -71,7 +71,7 @@ func (suite *OrderTestSuite) TestOrders() {
 						Offset: uint(offset),
 						Limit:  uint(limit),
 					},
-					Orders: []*Order{
+					Items: []*Order{
 						&Order{
 							NewOrder: NewOrder{
 								Email: expected[offset],

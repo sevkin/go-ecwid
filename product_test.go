@@ -76,7 +76,7 @@ func (suite *ProductTestSuite) TestProducts() {
 						Offset: uint(offset),
 						Limit:  uint(limit),
 					},
-					Products: []*Product{
+					Items: []*Product{
 						&Product{
 							NewProduct: NewProduct{
 								Name: expected[offset],

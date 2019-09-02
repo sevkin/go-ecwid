@@ -61,7 +61,7 @@ func (c *Client) Categories(ctx context.Context, filter map[string]string) <-cha
 	go func() {
 		defer close(catChan)
 
-		c.CategoriesTrampoline(filter, func(index int, category *Category) error {
+		c.CategoriesTrampoline(filter, func(index uint, category *Category) error {
 			// FIXME silent error. maybe catChan <- nil ?
 			select {
 			case <-ctx.Done():
@@ -73,32 +73,6 @@ func (c *Client) Categories(ctx context.Context, filter map[string]string) <-cha
 	}()
 
 	return catChan
-}
-
-// CategoriesTrampoline call on each category
-func (c *Client) CategoriesTrampoline(filter map[string]string, fn func(int, *Category) error) error {
-	filterCopy := make(map[string]string)
-	for k, v := range filter {
-		filterCopy[k] = v
-	}
-
-	for {
-		resp, err := c.CategoriesSearch(filterCopy)
-		if err != nil {
-			return err
-		}
-
-		for index, category := range resp.Items {
-			if err := fn(index, category); err != nil {
-				return err
-			}
-		}
-
-		if resp.Offset+resp.Count >= resp.Total {
-			return nil
-		}
-		filterCopy["offset"] = fmt.Sprintf("%d", resp.Offset+resp.Count)
-	}
 }
 
 // CategoryGet gets all details of a specific category in an Ecwid store by its ID

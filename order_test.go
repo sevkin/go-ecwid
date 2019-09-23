@@ -2,7 +2,9 @@ package ecwid
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -129,4 +131,41 @@ func (suite *OrderTestSuite) TestOrderGet() {
 	suite.Equal("s@k.y", o.Email, "email")
 	suite.Equal(1, len(o.Items), "items")
 	suite.Equal("test", o.Items[0].Name, "item name")
+}
+
+func (suite *OrderTestSuite) TestOrderUpdate() {
+	const (
+		orderID ID = 999
+	)
+
+	expectedEndpoint := fmt.Sprintf(endpoint+"/orders/%d", storeID, orderID)
+	requested := false
+
+	httpmock.RegisterNoResponder(
+		func(req *http.Request) (*http.Response, error) {
+			requested = true
+
+			suite.Equal("PUT", req.Method, "request method")
+			actualEndpoint := strings.Split(req.URL.String(), "?")[0]
+			suite.Equal(expectedEndpoint, actualEndpoint, "endpoint")
+			suite.Equal("application/json", req.Header["Content-Type"][0], "Content-Type: application/json")
+
+			body, err := ioutil.ReadAll(req.Body)
+			suite.Nil(err)
+			var o Order
+			err = json.Unmarshal(body, &o)
+			suite.Nil(err)
+
+			suite.Equal(o.FulfillmentStatus, FulfillmentReadyForPickup)
+
+			return httpmock.NewStringResponse(200, `{"updateCount":1}`), nil
+		})
+
+	order := &NewOrder{
+		FulfillmentStatus: FulfillmentReadyForPickup,
+	}
+	err := suite.client.OrderUpdate(orderID, order)
+	suite.Truef(requested, "request failed")
+
+	suite.Nil(err)
 }

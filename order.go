@@ -9,51 +9,51 @@ import (
 type (
 	// NewOrder https://developers.ecwid.com/api-documentation/orders#create-order
 	NewOrder struct {
-		Subtotal                        float32            `json:"subtotal"`
-		Total                           float32            `json:"total"`
-		Email                           string             `json:"email"`
-		PaymentMethod                   string             `json:"paymentMethod"`
-		PaymentModule                   string             `json:"paymentModule"`
-		Tax                             float32            `json:"tax"`
-		CustomerTaxExempt               bool               `json:"customerTaxExempt"`
-		CustomerTaxID                   string             `json:"customerTaxId"`
-		CustomerTaxIDValid              bool               `json:"customerTaxIdValid"`
-		ReversedTaxApplied              bool               `json:"reversedTaxApplied"`
-		IPAddress                       string             `json:"ipAddress"`
-		CouponDiscount                  float32            `json:"couponDiscount"`
-		PaymentStatus                   PaymentStatus      `json:"paymentStatus"`
-		FulfillmentStatus               FulfillmentStatus  `json:"fulfillmentStatus"`
-		RefererURL                      string             `json:"refererUrl"`
-		OrderComments                   string             `json:"orderComments"`
-		VolumeDiscount                  float32            `json:"volumeDiscount"`
-		CustomerID                      ID                 `json:"customerId"`
-		Hidden                          bool               `json:"hidden"`
-		MembershipBasedDiscount         float32            `json:"membershipBasedDiscount"`
-		TotalAndMembershipBasedDiscount float32            `json:"totalAndMembershipBasedDiscount"`
-		Discount                        float32            `json:"discount"`
-		GlobalReferer                   string             `json:"globalReferer"`
-		CreateDate                      DateTime           `json:"createDate"`
-		CustomerGroup                   string             `json:"customerGroup"`
-		DiscountCoupon                  DiscountCouponInfo `json:"discountCoupon"`
-		Items                           []OrderItem        `json:"items"`
-		BillingPerson                   PersonInfo         `json:"billingPerson"`
-		ShippingPerson                  PersonInfo         `json:"shippingPerson"`
-		ShippingOption                  ShippingOptionInfo `json:"shippingOption"`
-		HandlingFee                     HandlingFeeInfo    `json:"handlingFee"`
-		AdditionalInfo                  map[string]string  `json:"additionalInfo"`
-		PaymentParams                   map[string]string  `json:"paymentParams"`
-		DiscountInfo                    []DiscountInfo     `json:"discountInfo"`
-		TrackingNumber                  string             `json:"trackingNumber"`
-		PaymentMessage                  string             `json:"paymentMessage"`
-		ExternalTransactionID           string             `json:"externalTransactionId"`
-		AffiliateID                     string             `json:"affiliateId"`
-		CreditCardStatus                CreditCardStatus   `json:"creditCardStatus"`
-		PrivateAdminNotes               string             `json:"privateAdminNotes"`
-		PickupTime                      DateTime           `json:"pickupTime"`
-		AcceptMarketing                 bool               `json:"acceptMarketing"`
-		DisableAllCustomerNotifications bool               `json:"disableAllCustomerNotifications"`
-		ExternalFulfillment             bool               `json:"externalFulfillment"`
-		ExternalOrderID                 string             `json:"externalOrderId"`
+		Subtotal                        float32             `json:"subtotal,omitempty"`
+		Total                           float32             `json:"total,omitempty"`
+		Email                           string              `json:"email,omitempty"`
+		PaymentMethod                   string              `json:"paymentMethod,omitempty"`
+		PaymentModule                   string              `json:"paymentModule,omitempty"`
+		Tax                             float32             `json:"tax,omitempty"`
+		CustomerTaxExempt               bool                `json:"customerTaxExempt,omitempty"`
+		CustomerTaxID                   string              `json:"customerTaxId,omitempty"`
+		CustomerTaxIDValid              bool                `json:"customerTaxIdValid,omitempty"`
+		ReversedTaxApplied              bool                `json:"reversedTaxApplied,omitempty"`
+		IPAddress                       string              `json:"ipAddress,omitempty"`
+		CouponDiscount                  float32             `json:"couponDiscount,omitempty"`
+		PaymentStatus                   PaymentStatus       `json:"paymentStatus,omitempty"`
+		FulfillmentStatus               FulfillmentStatus   `json:"fulfillmentStatus,omitempty"`
+		RefererURL                      string              `json:"refererUrl,omitempty"`
+		OrderComments                   string              `json:"orderComments,omitempty"`
+		VolumeDiscount                  float32             `json:"volumeDiscount,omitempty"`
+		CustomerID                      ID                  `json:"customerId,omitempty"`
+		Hidden                          bool                `json:"hidden,omitempty"`
+		MembershipBasedDiscount         float32             `json:"membershipBasedDiscount,omitempty"`
+		TotalAndMembershipBasedDiscount float32             `json:"totalAndMembershipBasedDiscount,omitempty"`
+		Discount                        float32             `json:"discount,omitempty"`
+		GlobalReferer                   string              `json:"globalReferer,omitempty"`
+		CreateDate                      DateTime            `json:"createDate,omitempty"`
+		CustomerGroup                   string              `json:"customerGroup,omitempty"`
+		DiscountCoupon                  *DiscountCouponInfo `json:"discountCoupon,omitempty"`
+		Items                           []*OrderItem        `json:"items,omitempty"`
+		BillingPerson                   *PersonInfo         `json:"billingPerson,omitempty"`
+		ShippingPerson                  *PersonInfo         `json:"shippingPerson,omitempty"`
+		ShippingOption                  *ShippingOptionInfo `json:"shippingOption,omitempty"`
+		HandlingFee                     *HandlingFeeInfo    `json:"handlingFee,omitempty"`
+		AdditionalInfo                  map[string]string   `json:"additionalInfo,omitempty"`
+		PaymentParams                   map[string]string   `json:"paymentParams,omitempty"`
+		DiscountInfo                    []*DiscountInfo     `json:"discountInfo,omitempty"`
+		TrackingNumber                  string              `json:"trackingNumber,omitempty"`
+		PaymentMessage                  string              `json:"paymentMessage,omitempty"`
+		ExternalTransactionID           string              `json:"externalTransactionId,omitempty"`
+		AffiliateID                     string              `json:"affiliateId,omitempty"`
+		CreditCardStatus                *CreditCardStatus   `json:"creditCardStatus,omitempty"`
+		PrivateAdminNotes               string              `json:"privateAdminNotes,omitempty"`
+		PickupTime                      DateTime            `json:"pickupTime,omitempty"`
+		AcceptMarketing                 bool                `json:"acceptMarketing,omitempty"`
+		DisableAllCustomerNotifications bool                `json:"disableAllCustomerNotifications,omitempty"`
+		ExternalFulfillment             bool                `json:"externalFulfillment,omitempty"`
+		ExternalOrderID                 string              `json:"externalOrderId,omitempty"`
 	}
 
 	// Order https://developers.ecwid.com/api-documentation/orders#get-order-details
@@ -149,6 +149,16 @@ func (c *Client) OrderGet(orderID ID) (*Order, error) {
 
 	var result Order
 	return &result, responseUnmarshal(response, err, &result)
+}
+
+// OrderUpdate update an existing order in an Ecwid store referring to its ID
+func (c *Client) OrderUpdate(orderID ID, order *NewOrder) error {
+	response, err := c.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(order).
+		Put(fmt.Sprintf("/orders/%d", orderID))
+
+	return responseUpdate(response, err)
 }
 
 // TODO add more order methods

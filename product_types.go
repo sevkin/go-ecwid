@@ -97,28 +97,6 @@ type (
 	// ProductFile struct {
 	// }
 
-	// ProductVariation ...
-	ProductVariation struct {
-		ID                ID      `json:"id"`
-		CombinationNumber uint    `json:"combinationNumber"`
-		Sku               string  `json:"sku,omitempty"`
-		ThumbnailURL      string  `json:"thumbnailUrl,omitempty"`
-		ImageURL          string  `json:"imageUrl,omitempty"`
-		SmallThumbnailURL string  `json:"smallThumbnailUrl,omitempty"`
-		HdThumbnailURL    string  `json:"hdThumbnailUrl,omitempty"`
-		OriginalImageURL  string  `json:"originalImageUrl,omitempty"`
-		Quantity          uint    `json:"quantity"`
-		Unlimited         bool    `json:"unlimited"`
-		Price             float32 `json:"price,omitempty"`
-		Weight            float32 `json:"weight,omitempty"`
-		WarningLimit      uint    `json:"warningLimit"`
-		CompareToPrice    float32 `json:"compareToPrice,omitempty"`
-
-		Options         []OptionValue    `json:"options,omitempty"`
-		WholesalePrices []WholesalePrice `json:"wholesalePrices,omitempty"`
-		Attributes      []Attribute      `json:"attributes,omitempty"`
-	}
-
 	// FavoritesStats struct {
 	// }
 

@@ -7,3 +7,5 @@
 # Golang wrapper for Ecwid API
 
 Now in alpha stage. Not ready for production.
+
+[Ecwid REST API documentation](https://github.com/Ecwid/ecwid-api-docs)
